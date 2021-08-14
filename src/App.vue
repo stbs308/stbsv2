@@ -1,28 +1,58 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <v-app-bar class="pt-2" app color="primary" dark absolute>
+      <span class="mx-auto font-weight-bold white--text">Simply the Best Services, LLC.</span>
+      <v-spacer></v-spacer>
+      For emergencies, call 214-791-3263
+    </v-app-bar>
+
+
+    <v-main>
+      <Calendar v-if="authState === 'signedin' && user" :userProps="user.username" />
+    </v-main>
+
+
+        <amplify-authenticator>
+          <amplify-sign-in slot="sign-in" :hide-sign-up="true">
+          </amplify-sign-in>
+        </amplify-authenticator>
+        <amplify-sign-out v-if="authState === 'signedin'" >
+        </amplify-sign-out>
+
+
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Calendar from './components/Calendar';
+import { onAuthUIStateChange } from '@aws-amplify/ui-components'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Calendar,
+  },
+  created() {
+    this.unsubscribeAuth = onAuthUIStateChange((authState, authData) => {
+      this.authState = authState;
+      this.user = authData;
+    })
+  },
+  data() {
+    return {
+      user: undefined,
+      authState: undefined,
+      unsubscribeAuth: undefined,
+      collapseOnScroll: true,
+    }
+  },
+  beforeDestroy() {
+    this.unsubscribeAuth();
   }
-}
+};
 </script>
-
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  :root {
+    --amplify-primary-color: rgba(19, 89, 194, 0.776);
+  }
 </style>
