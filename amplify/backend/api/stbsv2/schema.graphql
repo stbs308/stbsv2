@@ -28,3 +28,15 @@ type calEvent @model @auth(rules: [
     owner2: String
     note_code: String
   }
+
+  type Subscription {
+    newOnCreateCalEvent: calEvent @aws_subscribe(mutations: ["createCalEvent"])
+    newOnUpdateCalEvent: calEvent @aws_subscribe(mutations: ["updateCalEvent"])
+    newOnDeleteCalEvent: calEvent @aws_subscribe(mutations: ["deleteCalEvent"])
+    techOnCreateCalEvent(category: String!): calEvent @aws_subscribe(mutations: ["createCalEvent"])
+    techOnUpdateCalEvent(category: String!): calEvent @aws_subscribe(mutations: ["updateCalEvent"])
+    techOnDeleteCalEvent(category: String!): calEvent @aws_subscribe(mutations: ["deleteCalEvent"])
+    custOnCreateCalEvent(owner2: String!): calEvent @aws_subscribe(mutations: ["createCalEvent"])
+    custOnUpdateCalEvent(owner2: String!): calEvent @aws_subscribe(mutations: ["updateCalEvent"])
+    custOnDeleteCalEvent(owner2: String!): calEvent @aws_subscribe(mutations: ["deleteCalEvent"])
+  }
