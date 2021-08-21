@@ -202,6 +202,7 @@
           :close-on-content-click="false"
           :activator="selectedElement"
           offset-x
+          :open-on-click="false"
         >
           <v-card color="grey lighten-4" flat>
             <v-toolbar :color="selectedEvent.color" dark>
@@ -226,7 +227,7 @@
                   {{ selectedEvent.admin_notes }}
                   <p></p>
                   <div v-if="!categories.includes(userProps)">
-                    <h3>Technician</h3>
+                    <h3>Technician Name</h3>
                     {{ selectedEvent.category }}
                   </div>
                 </div>
@@ -241,7 +242,7 @@
                     label="add note" 
                   ></v-textarea>
                 </div>
-                <div v-else>
+                <div v-else-if="userProps === 'admin'">
                   <h3>Customer Notes</h3>
                   {{ selectedEvent.details }}</div>
                 <p></p>
@@ -271,14 +272,18 @@
                   <div v-else>{{ selectedEvent.admin_notes }}</div>
                   <!-- DropDown for list of techs -->
                   <div v-if="userProps === 'admin' && selectedEvent.note_code !== 'COMP'">
-                    <h3>Technician</h3>
+                    <h3>Technician Name</h3>
                     <v-container fluid>
                       <v-col class="d-flex" cols="12" sm="6">
                         <v-select v-model="selectedEvent.category" :items="categories" label="Technician" dense solo></v-select>
                       </v-col>
                     </v-container>
                   </div>
-                  <div v-if="selectedEvent.note_code === 'COMP'">{{ selectedEvent.category}}</div>
+                  <p></p>
+                  <div v-if="selectedEvent.note_code === 'COMP'">
+                    <h3>Technician Name</h3>
+                    {{ selectedEvent.category}}
+                  </div>
                 </div>
               </form>
             </v-card-text>
@@ -292,7 +297,7 @@
               </div>
               <v-btn text v-else @click.prevent="updateEvent(selectedEvent)">Save</v-btn>
               <v-btn text
-                v-if="!categories.includes(userProps) && userProps !== 'admin' && selectedEvent.note_code !== 'CANC'"
+                v-if="!categories.includes(userProps) && userProps !== 'admin' && selectedEvent.note_code !== 'CANC' && selectedEvent.note_code !== 'COMP'"
                 @click.prevent="dialogCancelConfirmation = true">Cancel Job</v-btn>
               <v-btn
                 text
@@ -348,7 +353,7 @@
           </v-row>
         </v-menu>
       </v-sheet>
-      <!-- Alert if there's new job -->
+        <!-- Alert if there's new job -->
         <v-dialog v-if="userProps === 'admin'" v-model="newJobAlert" persistent max-width="290">
           <v-card>
             <v-card-title class="red headline" style="font-weight:bold; color:white;">New Jobs Alert!</v-card-title>
@@ -368,8 +373,8 @@
 import { useSound } from '@vueuse/sound'
 import buttonSfx from '../assets/audio.mp3'
 import { listCalEvents } from "@/graphql/queries";
-import { onCreateCalEvent } from "@/graphql/subscriptions"
-import { API } from "aws-amplify";
+import { newOnCreateCalEvent, newOnUpdateCalEvent, newOnDeleteCalEvent, techOnDeleteCalEvent, techOnUpdateCalEvent, techOnCreateCalEvent, custOnCreateCalEvent, custOnUpdateCalEvent, custOnDeleteCalEvent } from "@/graphql/subscriptions"
+import { API, graphqlOperation } from "aws-amplify";
 import {
   createCalEvent,
   updateCalEvent,
@@ -393,6 +398,7 @@ export default {
     // corners_complex: ['east', 'west'],
     dialogFind: false,
     dialog_color: null,
+    copyDelete: "on",
     searchApt: null,
     showError: false,
     diffInDays: null,
@@ -427,8 +433,7 @@ export default {
     apt_statuss: ["Occupied","Vacant"],
     service_categories: ["Carpet","Housekeeping","Paint","Other"],
     category: null,
-    categories: ["cesar","conrrado","david","eduardo","martin","pablo","santiago","sury","yamileth"],
-    selectedEmp: [],
+    categories: ["cesar","conrrado","david","eduardo","martin","pablo","santiago","sury","yamileth"],    selectedEmp: [],
     newJobAlert: false,
     owner2: null,
     owners: ["dakota","corners","customer1","customer2"],
@@ -469,16 +474,6 @@ export default {
     singleExpand: false,
     expanded:[]
   }),
-  mounted() {
-    this.$refs.calendar.checkChange();
-    this.getCalEvents();
-    if (this.categories.indexOf(this.userProps) >= 0){
-      this.type='day'
-    } 
-    //   else if (this.userProps === 'admin'){
-    //     this.type='month'
-    // } 
-  },
   setup() {
     const { play } = useSound(buttonSfx)
     return {
@@ -491,23 +486,168 @@ export default {
     }
   },
   created(){
-    if (this.userProps === 'admin'){
-      this.subscribeCreate()
-    }
+    this.subscribeCal()
+  },
+  mounted() {
+    this.$refs.calendar.checkChange();
+    this.getCalEvents();
+    if (this.categories.indexOf(this.userProps) >= 0){
+      this.type='day'
+    } 
+    //   else if (this.userProps === 'admin'){
+    //     this.type='month'
+    // } 
   },
   methods: {
-    subscribeCreate(){
-      API.graphql({ query: onCreateCalEvent })
+    async subscribeCal(){
+      // EH1
+      // If admin
+      const that = this
+      if (this.userProps === 'admin'){
+        API.graphql({ query: newOnCreateCalEvent })
         .subscribe({
           next: (eventData) => {
-            let event = eventData.value.data.onCreateCalEvent;
-            if (this.events.some(item => item.name === event.name)) return; // remove duplications
-            this.events = [...this.events, event]
+            that.events.push(eventData.value.data.newOnCreateCalEvent) 
+            if(this.copyDelete==='off'){
+              // do nothing
+              console.log("**** do nothing")
+            } else {
+                this.playSound()
+                this.newJobAlert = true;   
+                console.log("**** alert ")
+            }
             this.getCalEvents()
-            this.newJobAlert = true;
-            this.playSound()
-          }
+            console.log("subs on create")
+            this.copyDelete='on'
+          }, error: error => console.warn(error)
         });
+
+        // API.graphql({ query: newOnCreateCalEvent })
+        // .subscribe({
+        //   next: (eventData) => {
+        //     that.events.push(eventData.value.data.newOnCreateCalEvent)
+        //     // let event = eventData.value.data.newOnCreateCalEvent;
+        //     // if (this.events.some(item => item.name === event.name)) return; // remove duplications
+        //     // this.events = [...this.events, event]
+        //     this.jobAlert()
+        //     this.getCalEvents()
+
+        //   }, error: error => console.warn(error)
+        // });
+        API.graphql({ query: newOnUpdateCalEvent })
+        .subscribe({
+          next: (eventUpdateData) => {
+            that.events.push(eventUpdateData.value.data.newOnUpdateCalEvent)
+            // const ev=eventUpdateData.value.data.newOnUpdateCalEvent
+            // this.selectedEvent.name=ev.time_of_day + " - " + ev.owner2 + " - " + ev.service_category + " - " + ev.apt_num + " - " + " - " + ev.apt_status + " - " + ev.category
+            this.getCalEvents()
+            // console.log("sub newOnUpdateData")
+            // console.log("-----------")
+            // console.log("==== Color ====")
+            // console.log("this.color - " + this.color)
+            // console.log("this.selectedEvent.color - " + this.selectedEvent.color)
+            // console.log("subs.color - " + eventUpdateData.value.data.newOnUpdateCalEvent.color)
+            // this.selectedEvent.color=ev.color
+            // this.selectedEvent.details=ev.details
+            // this.selectedEvent.emp_notes=ev.emp_notes
+            // this.selectedEvent.admin_notes=ev.admin_notes
+          }, error: error => console.warn(error)
+        });
+        API.graphql({ query: newOnDeleteCalEvent })
+        .subscribe({
+          next: (eventDeleteData) => {
+            that.events.push(eventDeleteData.value.data.newOnDeleteCalEvent)      
+            this.getCalEvents()
+          }, error: error => console.warn(error)
+        });
+      } else {
+        // technician subs
+        API.graphql(
+          graphqlOperation(techOnCreateCalEvent, {
+          category: this.userProps
+         }))
+        .subscribe({
+          next: (eventTechCreateData) => {
+            that.events.push(eventTechCreateData.value.data.techOnCreateCalEvent)      
+            this.getCalEvents()
+          }, error: error => console.warn(error)
+        });
+        API.graphql(
+          graphqlOperation(techOnUpdateCalEvent, {
+          category: this.userProps
+         }))
+        .subscribe({
+          next: (eventTechUpdateData) => {
+            that.events.push(eventTechUpdateData.value.data.techOnUpdateCalEvent)   
+            const ev=eventTechUpdateData.value.data.techOnUpdateCalEvent
+            // if (ev.color === 'brown'){
+            //   this.selectedEvent.color='orange'
+            // } 
+            // else if (ev.color==='black'){
+            //   this.selectedEvent.color='black'
+            // }
+            // this.selectedEvent.name=this.name
+
+            // when technician is having funky colors from a previous issue     
+            // this.color=this.selectedEvent.color
+
+
+            console.log("sub eventTechUpdateData")
+            console.log("-----------")
+            console.log("==== Color ====")
+            console.log("this.color - " + this.color)
+            console.log("this.selectedEvent.color - " + this.selectedEvent.color)
+            console.log("subs.color - " + ev.color)
+            this.getCalEvents()
+          }, error: error => console.warn(error)
+        });
+        API.graphql(
+          graphqlOperation(techOnDeleteCalEvent, {
+          category: this.userProps
+         }))
+        .subscribe({
+          next: (eventTechDeleteData) => {
+            that.events.push(eventTechDeleteData.value.data.techOnDeleteCalEvent)      
+            this.getCalEvents()
+            console.log("Delete from Tech")
+          }, error: error => console.warn(error)
+        });
+        // customer subs
+        API.graphql(
+          graphqlOperation(custOnCreateCalEvent, {
+          owner2: this.userProps
+         }))
+        .subscribe({
+          next: (eventCustCreateData) => {
+            that.events.push(eventCustCreateData.value.data.custOnCreateCalEvent)      
+            this.getCalEvents()
+          }, error: error => console.warn(error)
+        });
+        API.graphql(
+          graphqlOperation(custOnUpdateCalEvent, {
+          owner2: this.userProps
+         }))
+        .subscribe({
+          next: (eventCustUpdateData) => {
+            that.events.push(eventCustUpdateData.value.data.custOnUpdateCalEvent)
+            // this.selectedEvent=eventCustUpdateData.value.data.custOnUpdateCalEvent
+            // this.selectedEvent.name=this.name 
+            // this.selectedEvent.color=this.color     
+            this.getCalEvents()
+          }, error: error => console.warn(error)
+        });
+        API.graphql(
+          graphqlOperation(custOnDeleteCalEvent, {
+          owner2: this.userProps
+         }))
+        .subscribe({
+          next: (eventCustDeleteData) => {
+            that.events.push(eventCustDeleteData.value.data.custOnDeleteCalEvent)      
+            this.getCalEvents()
+            console.log("Deleted from Customer")
+          }, error: error => console.warn(error)
+        });
+      }
     },
     async getCalEvents() {
       // if user is technician
@@ -516,25 +656,27 @@ export default {
         const calendars = await API.graphql({ query: listCalEvents, variables: { filter: filter }});
         const eventsorig = calendars.data.listCalEvents.items;
         let events = []
-        // let searchableItems = []
         let ce = eventsorig
         ce.forEach(doc => {
           if (doc.note_code === 'NBA'){
             this.color = 'orange'
-            this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.name2
+            this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
           } else if (doc.note_code === 'NBT'){
               this.color = 'brown'
-              this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.name2
+              this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
               this.selectedEvent.color = this.color
           } else if (doc.note_code === 'NBC'){
               this.color = 'black'
-              this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.name2
-          } else if (doc.note_code === 'CANC' || doc.note_code === 'COMP'){
-              this.name = doc.name
+              this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+          } else if (doc.note_code === 'CANC'){
+              this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+              this.color = doc.color
+          } else if (doc.note_code === 'COMP'){
+              this.name = "COMPLETED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
               this.color = doc.color
           } else {
+            this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
             this.color = doc.color
-            this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.name2
           }
           events.push({
             id: doc.id,
@@ -547,7 +689,6 @@ export default {
             category: doc.category,
             emp_notes: doc.emp_notes,
             admin_notes: doc.admin_notes,
-            name2: doc.name2,
             note_code: doc.note_code,
             time_of_day: doc.time_of_day,
             apt_num: doc.apt_num,
@@ -566,18 +707,28 @@ export default {
         let events = []
         let ce = eventsorig
         ce.forEach(doc => {
+          if (doc.note_code === 'CANC'){
+              this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+              this.color = doc.color
+          } else if (doc.note_code === 'COMP'){
+              this.name = "COMPLETED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+              this.color = doc.color
+          } else if(doc.category === null){
+              this.name=doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+          } else {
+            this.name=doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status + " - " + doc.category
+          }
           events.push({
             id: doc.id,
             owner2: doc.owner2,
             start: doc.start,
             end: doc.end,
-            name: doc.name,
+            name: this.name,
             color: doc.color,
             details: doc.details,
             category: doc.category,
             emp_notes: doc.emp_notes,
             admin_notes: doc.admin_notes,
-            name2: doc.name2,
             note_code: doc.note_code,
             time_of_day: doc.time_of_day,
             apt_num: doc.apt_num,
@@ -598,14 +749,14 @@ export default {
         ce.forEach(doc => {
           // if cancelled, then display name
           if (doc.note_code === 'CANC'){
-            this.name = doc.name
+            this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
             this.color = 'grey'
           } else if (doc.note_code === 'COMP'){
-            this.name = doc.name
+            this.name = "COMPLETED - " + doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
             this.color = 'blue'
           // if not cancelled, then show only customer pertinent information
           } else {
-            this.name = doc.time_of_day + " - " + doc.name2
+            this.name = doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
             this.color = 'black'
           }
 
@@ -620,7 +771,6 @@ export default {
             category: doc.category,
             emp_notes: doc.emp_notes,
             admin_notes: doc.admin_notes,
-            name2: doc.name2,
             note_code: doc.note_code,
             time_of_day: doc.time_of_day,
             apt_num: doc.apt_num,
@@ -632,7 +782,6 @@ export default {
       }
     },
     async createEvent() {
-
       // set time based on am/pm
       if (this.time_of_day === 'PM'){
           this.start_time = '12:00'
@@ -653,11 +802,11 @@ export default {
       // this.note_code = 'NBC'
 
       // if technician is assigned, attach it to job name, else nothing
-      if (this.category !== null){
-        this.name = this.time_of_day  + " - " + this.owner2 + " - " + this.service_category + " - " + this.apt_num + " - " + this.apt_status + " - " + this.category;
-      } else {
-        this.name = this.time_of_day  + " - " + this.owner2 + " - " + this.service_category + " - " + this.apt_num + " - " + this.apt_status;
-      }
+      // if (this.category !== null){
+      //   this.name = this.time_of_day  + " - " + this.owner2 + " - " + this.service_category + " - " + this.apt_num + " - " + this.apt_status + " - " + this.category;
+      // } else {
+      //   this.name = this.time_of_day  + " - " + this.owner2 + " - " + this.service_category + " - " + this.apt_num + " - " + this.apt_status;
+      // }
       this.start = this.start_date
       this.end = this.start_date
       // this.start = this.start_date + " " + this.start_time
@@ -666,9 +815,10 @@ export default {
     //   this.end = new Date(Date.parse(this.start_date + " " + this.end_time))
       // this.end = this.start_date + " " + this.end_time
       // console.log(this.end)
-      this.name2 = this.service_category + " - " + this.apt_num + " - " + this.apt_status;
-      const { name, name2, details, start, end, time_of_day, color, category, owner2, service_category, apt_num, apt_status, note_code } = this;
-      const calendar = { name, name2, details, start, end, time_of_day, color, category, owner2, service_category, apt_num, apt_status, note_code };
+      // this.name2 = this.service_category + " - " + this.apt_num + " - " + this.apt_status;
+      this.name =""
+      const { name, details, start, end, time_of_day, color, category, owner2, service_category, apt_num, apt_status } = this;
+      const calendar = { name, details, start, end, time_of_day, color, category, owner2, service_category, apt_num, apt_status };
 
       // Make field mandatory 
       // If user is admin and all info are available, then create record
@@ -710,136 +860,244 @@ export default {
       this.currentlyEditing = ev.id;
     },
     async updateEvent(ev) {
+      this.copyDelete="on"
+      // console.log("******* start data **** ")
+      // console.log("this.admin_notes - " + this.category)
+      // console.log("this.before_admin_notes_value - " + this.before_admin_notes_value)
+      // console.log("this.selectedEvent.admin_notes - " + this.selectedEvent.admin_notes)
+      // console.log("ev.admin_notes - " + ev.admin_notes)
+      // console.log("==== Color ====")
+      // console.log("this.color - " + this.color)
+      // console.log("this.selectedEvent.color - " + this.selectedEvent.color)
+      // console.log("ev.color - " + ev.color)
+      // console.log("==== Technician ====")
+      // console.log("this.category - " + this.category)
+      // console.log("this.before_category_value - " + this.before_category_value)
+      // console.log("this.selectedEvent.category - " + this.selectedEvent.category)
+      // console.log("ev.category - " + ev.category)
+      // console.log("---------------------------")
 
-      // If job is not complete, allow for note_code and color changes to tke place
-      if (this.selectedEvent.note_code !== 'COMP'){
-        // If nothing has changed, close the form
-        if (
-          this.before_details_value === this.selectedEvent.details &&
-          this.before_emp_notes_value === this.selectedEvent.emp_notes &&
-          this.before_admin_notes_value === this.selectedEvent.admin_notes &&
-          this.before_category_value === this.selectedEvent.category
-          ) 
-          { 
-            this.selectedOpen = false
-          } else {
-            // Color Determination
-            
-            // 1 If any note changes, color is orange
-            if (
-              this.before_details_value != this.selectedEvent.details ||
-              this.before_emp_notes_value != this.selectedEvent.emp_notes ||
-              this.before_admin_notes_value != this.selectedEvent.admin_notes
-              ) { this.color = "orange"; console.log("Rule 1")} 
-            // 2 If no technician assigned and color is not grey, color is red
-            if (this.selectedEvent.category === null && this.selectedEvent.color !== 'grey'){this.color = 'red'; console.log("Rule 2")}
-            // 3A If technician is assigned for first time, color is black
-            if (this.before_category_value != this.selectedEvent.category && this.before_category_value === null && this.selectedEvent.note_code === 'NBA'){this.color = 'brown'
-              // console.log("Rule 3A")
-            // 3B else if technician is assigned for first time, color is black
-            } else if (this.before_category_value != this.selectedEvent.category && this.before_category_value === null){this.color = 'black'
-            // console.log("Rule 3B")
-            }
-            // 4 If color is already grey, color stays grey all the way
-            if (this.selectedEvent.color === 'grey'){ this.color = 'grey'; console.log("Rule 4")}
-            // 5 If technician assignement is changed, append the new tech name to the job name
-            // console.log("selectedEvent.name = " + this.selectedEvent.name)
-            // console.log("selectedEvent.name2 = " + this.selectedEvent.name2 )
-            // console.log("selectedEvent.category = " + this.selectedEvent.category)
-            if (this.before_category_value != this.selectedEvent.category){ this.selectedEvent.name= this.selectedEvent.time_of_day + " - " + this.selectedEvent.owner2 + " - " + this.selectedEvent.name2 + " - " + this.selectedEvent.category; console.log("Rule 5") }
-              else { this.name=this.selectedEvent.name }
-            // 6 If technician assignment is changed and admin notes changed, append the new tech name to the job name and change color to orange
-            // console.log("selectedEvent.name = " + this.selectedEvent.name)
-            // console.log("before_admin_notes = " + this.before_admin_notes_value)
-            // console.log("selectedEvent.admin_notes = " + this.selectedEvent.admin_notes)
-            if (this.before_category_value != this.selectedEvent.category && this.before_admin_notes_value != this.selectedEvent.admin_notes)
-              { 
-                this.name=this.selectedEvent.time_of_day + " - " + this.selectedEvent.owner2 + " - " + this.selectedEvent.name2 + " - " + this.selectedEvent.category 
-                this.color = 'orange'; console.log("Rule 6") }
-              else { this.name=this.selectedEvent.name }
-            // Determine NOTE_CODE and color for admin
-            // 7 if customer edit notes, note_code is NBC
-            if(this.before_details_value !== this.selectedEvent.details) {
-              this.note_code = "NBC"
-            // 8 If tech edit notes, note_code is NBT
-            } else if (this.before_emp_notes_value !== this.selectedEvent.emp_notes){
-              this.note_code = "NBT"
-              this.color = 'orange'
-              // console.log("Rule 8: " + this.selectedEvent.name)
-            // 9 If admin edit notes, note_code is NBA and color is red if no tech has been assigned
-            } else if (this.before_admin_notes_value !== this.selectedEvent.admin_notes && this.selectedEvent.category === null){
-              this.note_code = "NBA"
-              this.color = 'red'
-              // console.log("Rule 9")
-              // 10 if tech has been assigned for first time and admin make some note changes, make color brown
-            } else if (this.before_admin_notes_value !== this.selectedEvent.admin_notes && this.selectedEvent.category !== null){
-              this.note_code = 'NBA'
-              this.color = 'brown'
-              // console.log("Rule 10")
-              // 11 if job is red (new) and note_code is NBC and tech is assigned for first time, color should b orange
-            } else if (this.selectedEvent.note_code === 'NBC' && this.selectedEvent.color === 'red' && this.before_category_value === null) {
-              this.color = 'orange'
-              // console.log("Rule 11")
-            }
+      // console.log(ev.note_code)
+      // console.log(this.note_code)
 
-            // Determine what name to show (with or without technician)
-            if (this.selectedEvent.category === null){
-              this.name=this.selectedEvent.time_of_day + " - " + this.selectedEvent.owner2 + " - " + this.selectedEvent.name2 
-              // console.log("Rule 12A")
+      // if COMP, save whatever notes are entered
+
+      //eh2
+      if(ev.note_code==='COMP'){
+        console.log("***** completed section ")
+        this.color='blue'
+        this.note_code='COMP'
+        const calEventDetails = {
+          id: this.currentlyEditing,
+          details: ev.details,
+          emp_notes: ev.emp_notes,
+          admin_notes: ev.admin_notes}
+        await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
+        // * if there's a change in technician assignment... ONLY ADMIN can perform this
+      } else if(this.before_category_value != this.selectedEvent.category){
+          console.log("assigning tech")
+          // ** A - if there's no technician currently assigned
+          if (this.before_category_value===null){
+            console.log("A1")
+            // *** A1 - if notes r added
+            if (this.before_admin_notes_value != this.selectedEvent.admin_notes){
+              console.log("Technician is not previously assigned but notes r added")
+              this.note_code='NBA'
+              this.color='brown'
+            // *** A2 - if notes r NOT modified... category already in graphql
             } else {
-              this.name=this.selectedEvent.time_of_day + " - " + this.selectedEvent.owner2 + " - " + this.selectedEvent.name2 + " - " + this.selectedEvent.category
-              // console.log("Rule 12B")
+              console.log("A2")
+                if(ev.code==='NBA'){
+                  this.color='brown'
+                } else if (ev.code==='NBC'){
+                  this.color='orange'
+                } else {
+                    this.color='black'
+                }
             }
-
-            // if something ended up without any values, use what's already in the db
-            if (this.note_code === null){
-              this.note_code = this.selectedEvent.note_code
-            }
-
             const calEventDetails = {
               id: this.currentlyEditing,
-              name: this.name,
-              details: ev.details,
-              admin_notes: ev.admin_notes,
-              emp_notes: ev.emp_notes,
-              category: ev.category,
+              note_code: this.note_code,
               color: this.color,
-              note_code: this.note_code
-            };
-            await API.graphql({
-              query: updateCalEvent,
-              variables: { input: calEventDetails },
-            });
-            this.selectedOpen = false;
-            this.currentlyEditing = null;
+              category: ev.category,
+              admin_notes: ev.admin_notes}
+            await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
+          } // this is where A ends
 
-            // maintaining colors for admin
-            if (this.userProps === 'admin'){
-              this.selectedEvent.name = this.name
-              this.selectedEvent.color = this.color
+        // ** B if there's technician previously assigned
+        else {
+            // *** B1 - notes r added
+            if (this.before_admin_notes_value != this.selectedEvent.admin_notes){
+              console.log("B1")
+              this.admin_notes=ev.admin_notes
+              this.color='brown'
+              this.note_code='NBA'
+            // *** B2 - no notes r added
+            } else {
+              console.log("B2")
+            this.color='black'
+            const calEventDetails = {
+              id: this.currentlyEditing,
+              color: this.color,
+              note_code: this.note_code,
+              admin_notes: this.selectedEvent.admin_notes}
+            await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
+
+                // 1)
+                // make sure it is not triggered when assigning a newly created service job
+                // make sure there's not a new job alert... does not show up when there's a duplicate
+
+                // 2) when edit without changing anything, it turns blue
+
             }
 
-            this.getCalEvents();
-          }
-      // even if job is completed, everyone is allowed to make note changes but not note_code and color changes
-      } else if (this.selectedEvent.note_code === 'COMP'){
-              const calEventDetails = {
-              id: this.currentlyEditing,
-              details: ev.details,
-              admin_notes: ev.admin_notes,
-              emp_notes: ev.emp_notes,
-            };
-            await API.graphql({
-              query: updateCalEvent,
-              variables: { input: calEventDetails },
-            });
-            this.selectedOpen = false;
-            this.currentlyEditing = null;
-            // this.selectedEvent.name = this.name
-            // this.selectedEvent.color = this.color
-            this.getCalEvents();
+                //when changing technician, duplicate service job and delete original
 
+                // copyDelete determines whether to control the alert sound and box
+                this.copyDelete="off"
+                this.duplicateEvent(ev)
+                this.deleteEvent(ev)
+                
+                // this.copyDelete="off"
+          // this.selectedEvent.color=this.color
+          // this.selectedEvent.name=ev.time_of_day + " - " + ev.owner2 + " - " + ev.service_category + " - " + ev.apt_num + " - " + ev.apt_status + " - " + this.selectedEvent.category
+        
+        
+        } // ** B ends here
+
+      } // * ends here
+      
+      // ** C did not change technician but notes were added
+      else if (this.before_details_value != ev.details||this.before_admin_notes_value != ev.admin_notes||this.before_emp_notes_value != ev.emp_notes)
+      {
+        // are there note changes
+        // without technician
+        if (ev.category===null){
+        // *** C1 customer added notes
+          if(this.before_details_value != ev.details){
+            console.log("C1")
+            this.note_code='NBC'
+          }
+          // *** C2 admin added notes
+          else if(this.before_admin_notes_value != ev.admin_notes){
+            console.log("C2")
+            this.note_code='NBA'
+          }
+          // *** C3 tech added notes
+          else if(this.before_emp_notes_value != ev.emp_notes){
+            console.log("C3")
+            this.note_code='NBT'
+          }
+          this.color='red'
+        } else {
+          // note changes with technician
+          // *** C4 customer added notes
+          if(this.before_details_value != ev.details){
+            console.log("C4")
+            this.note_code='NBC'
+            this.color='orange'
+          }
+          // *** C5 admin added notes
+          else if(this.before_admin_notes_value != ev.admin_notes){
+            console.log("C5")
+            this.note_code='NBA'
+            this.color='brown'
+          }
+          // *** C6 tech added notes
+          else if(this.before_emp_notes_value != ev.emp_notes){
+            console.log("C6")
+            this.note_code='NBT'
+            this.color='orange'
+          }
+        }
       }
+        else {
+          // *** C7 Nothing changed
+          console.log("C7")
+          this.color=ev.color
+          this.note_code=ev.note_code
+        }
+        const calEventDetails = {
+          id: this.currentlyEditing,
+          color: this.color,
+          note_code: this.note_code,
+          details: ev.details,
+          emp_notes: ev.emp_notes,
+          admin_notes: ev.admin_notes
+          }
+        await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
+
+      // if no rule applies, make color black
+      // else { 
+      //   this.color='black'
+      //   console.log("no rule applied")
+
+      //     const calEventDetails = {
+      //     id: this.currentlyEditing,
+      //     color: this.color,
+      //     }
+      //   await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
+      //   }
+      // *** EH ensuring that before value takes on the new value before another value is added... issue seen when technician r note changed multiple times n then back to original value
+      // this.before_category_value = this.selectedEvent.category
+      // this.before_details_value = this.selectedEvent.details
+      // this.before_emp_notes_value = this.selectedEvent.emp_notes
+      // this.before_admin_notes_value = this.selectedEvent.admin_notes
+
+      // B should end here
+      
+      this.selectedOpen = false;
+      this.currentlyEditing = null;
+      this.getCalEvents()
+      
+        // console.log("---------------------------")
+        // console.log("------ end ------")
+        // console.log("this.admin_notes - " + this.category)
+        // console.log("this.before_admin_notes_value - " + this.before_admin_notes_value)
+        // console.log("this.selectedEvent.admin_notes - " + this.selectedEvent.admin_notes)
+        // console.log("ev.admin_notes - " + ev.admin_notes)
+        // console.log("==== Color ====")
+        // console.log("this.color - " + this.color)
+        // console.log("this.selectedEvent.color - " + this.selectedEvent.color)
+        // console.log("ev.color - " + ev.color)
+        // console.log("==== Technician ====")
+        // console.log("this.category - " + this.category)
+        // console.log("this.before_category_value - " + this.before_category_value)
+        // console.log("this.selectedEvent.category - " + this.selectedEvent.category)
+        // console.log("ev.category - " + ev.category)
+    },
+    async duplicateEvent(ev){
+      // const calEventDetailsDel = { id: ev.id };
+      // await API.graphql({
+      //   query: deleteCalEvent,
+      //   variables: { input: calEventDetailsDel },
+      // });
+      // console.log("Delete")
+
+      const calEventDetails = {
+        name: "",
+        details: ev.details,
+        start: ev.start,
+        end: ev.end,
+        owner2: ev.owner2,
+        service_category: ev.service_category,
+        apt_num: ev.apt_num,
+        apt_status: ev.apt_status,
+        time_of_day: ev.time_of_day,
+        admin_notes: ev.admin_notes,
+        emp_notes: ev.emp_notes,
+        category: ev.category,
+        color: this.color,        // fixes problem for when changing tech n adding notes, stays black
+        note_code: this.note_code // fixex problem for when changing tech n adding notes, tech is 
+      };
+      // await API.graphql({
+      //   query: updateCalEvent,
+      //   variables: { input: calEventDetails },
+      // });
+      await API.graphql({query: createCalEvent, variables: { input: calEventDetails }})
+      console.log("Copy")
+
+  
     },
     closeEvent(){
       this.selectedOpen = false
@@ -880,7 +1138,7 @@ export default {
         id: ev.id,
         color: ev.color,
         note_code: ev.note_code,
-        name: "COMPLETED " + "- " + ev.name
+        // name: "COMPLETED " + "- " + ev.name
       };
 
       await API.graphql({
@@ -910,9 +1168,10 @@ export default {
       });
       this.selectedOpen = false;
       this.currentlyEditing = null;
-      this.getCalEvents();
+      // this.getCalEvents();
     },
     async deleteEvent(ev) {
+      console.log("Delete Event")
       const calEventDetails = { id: ev.id };
       await API.graphql({
         query: deleteCalEvent,
@@ -920,8 +1179,9 @@ export default {
       });
       this.dialogDeleteConfirmation = false;
       this.selectedOpen = false;
-      this.currentlyEditing = null;
-      this.getCalEvents();
+
+      // this.currentlyEditing = null;
+      // this.getCalEvents();
     },
     viewDay({ date }) {
       this.focus = date;
@@ -952,10 +1212,13 @@ export default {
       this.$refs.calendar.next();
     },
     showEvent({ nativeEvent, event }) {
-       
+
+      console.log("you clicked showEvent")
+      // console.log("this.selectedEventcolor = " + this.selectedEvent.color)
+      // console.log("this.event.color = " + event.color)
       const open = () => {
         this.selectedEvent = event;
-        this.selectedElement = nativeEvent.target;
+        this.selectedElement = nativeEvent.currentTarget;
         setTimeout(() => (this.selectedOpen = true), 10);
       };
 
@@ -971,7 +1234,7 @@ export default {
       this.before_emp_notes_value = this.selectedEvent.emp_notes;
       this.before_admin_notes_value = this.selectedEvent.admin_notes;
       this.before_category_value = this.selectedEvent.category;
-      this.before_color_value = this.selectedEvent.color
+      // this.before_color_value = this.selectedEvent.color
 
 
     },
