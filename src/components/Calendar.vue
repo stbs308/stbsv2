@@ -433,10 +433,11 @@ export default {
     apt_statuss: ["Occupied","Vacant"],
     service_categories: ["Carpet","Housekeeping","Paint","Other"],
     category: null,
-    categories: ["cesar","conrrado","david","eduardo","martin","pablo","santiago","sury","yamileth"],    selectedEmp: [],
+    categories: ["cesar","conrrado","eduardo","jose","martin","pablo","sury","yamileth"],    
+    selectedEmp: [],
     newJobAlert: false,
     owner2: null,
-    owners: ["dakota","corners","customer1","customer2"],
+    owners: ["apex","arlington","ash","aura","bnf","cedar","chase","corners","corners-east","dakota","drey","durham","gate","gateway","holston","huntington","interurban","kace","live-oaks","lucas","magnmay","northbridge","park","riviera","stonebriar","teak","tealwood"],
     note_code: null,
     search: '',
     headers: [
