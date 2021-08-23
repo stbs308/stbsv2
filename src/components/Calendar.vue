@@ -433,7 +433,7 @@ export default {
     apt_statuss: ["Occupied","Vacant"],
     service_categories: ["Carpet","Housekeeping","Paint","Other"],
     category: null,
-    categories: ["cesar","conrrado","eduardo","jose","martin","pablo","sury","yamileth","technician1"],    
+    categories: ["cesar","conrrado","eduardo","jose","martin","pablo","resurface","sury","yamileth","technician1"],    
     selectedEmp: [],
     newJobAlert: false,
     owner2: null,
