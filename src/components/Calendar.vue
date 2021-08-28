@@ -437,7 +437,7 @@ export default {
     selectedEmp: [],
     newJobAlert: false,
     owner2: null,
-    owners: ["apex","arlington","ash","aura","bnf","cedar","chase","corners","corners-east","dakota","drey","durham","gate","gateway","holston","huntington","interurban","kace","live-oaks","lucas","magnmay","northbridge","park","riviera","stonebriar","teak","tealwood","customer1"],
+    owners: ["apex","arlington","ash","aura","bnf","cedar","chase","corners","corners-east","dakota","drey","durham","gate","gateway","hill","holston","huntington","interurban","kace","live-oaks","lucas","magnmay","northbridge","park","riviera","stonebriar","teak","tealwood","customer1"],
     note_code: null,
     search: '',
     headers: [
