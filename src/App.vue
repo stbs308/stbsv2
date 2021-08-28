@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar class="pt-2" app color="primary" dark absolute>
+    <v-app-bar app color="primary" dark absolute>
       <span class="mx-auto font-weight-bold white--text">Simply the Best Services, LLC.</span>
       <v-spacer></v-spacer>
       For emergencies, call 214-791-3263
