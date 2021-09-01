@@ -175,7 +175,7 @@
           </v-card>
         </v-dialog>
       </v-sheet>
-      <v-sheet height="600">
+      <v-sheet height="1000">
         <!-- Calendar -->
         <v-calendar
           ref="calendar"
@@ -184,7 +184,7 @@
           :first-interval="23"
           :interval-minutes="480"
           :interval-height="1"
-          :event-margin-bottom="10"
+          :event-margin-bottom="2"
           :events="events"
           :event-color="getEventColor"
           :type="type"
@@ -1336,4 +1336,7 @@ export default {
 .selected {
     background-color: blue
 }
+/* .v-calendar-daily__scroll-area {
+  overflow-y: scroll !important;
+} */
 </style>
