@@ -8,29 +8,32 @@
 
 
     <v-main>
-      <Calendar v-if="authState === 'signedin' && user" :userProps="user.username" />
+      <TD />
+      <!-- <Calendar v-if="authState === 'signedin' && user" :userProps="user.username" /> -->
     </v-main>
 
 
-        <amplify-authenticator>
+        <!-- <amplify-authenticator>
           <amplify-sign-in slot="sign-in" :hide-sign-up="true">
           </amplify-sign-in>
         </amplify-authenticator>
         <amplify-sign-out v-if="authState === 'signedin'" >
-        </amplify-sign-out>
+        </amplify-sign-out> -->
 
 
   </v-app>
 </template>
 
 <script>
-import Calendar from './components/Calendar';
+// import Calendar from './components/Calendar';
+import TD from './components/TechnicalDifficulites.vue'
 import { onAuthUIStateChange } from '@aws-amplify/ui-components'
 
 export default {
   name: 'App',
   components: {
-    Calendar,
+    // Calendar,
+    TD,
   },
   created() {
     this.unsubscribeAuth = onAuthUIStateChange((authState, authData) => {
