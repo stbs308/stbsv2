@@ -654,7 +654,10 @@ export default {
       // if user is technician
       if (this.categories.indexOf(this.userProps) >= 0) {
         let filter = {category: {eq: this.userProps}};
-        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
+
+        // page 1 of query
+        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 300, filter: filter }});
+
         const eventsorig = calendars.data.listCalEvents.items;
         let events = []
         let ce = eventsorig
@@ -701,10 +704,30 @@ export default {
 
       // if user is admin
       } else if (this.userProps === 'admin'){
-        const calendars = await API.graphql({ query: listCalEvents, variables: {limit: 1000} });
+        // const calendars = await API.graphql({ query: listCalEvents, variables: {limit: 300} });
         // this.events = calendars.data.listCalEvents.items;
 
-        const eventsorig = calendars.data.listCalEvents.items;
+
+let n = 0;
+while (n < 3) { n++;}
+
+console.log(n);
+
+
+        const calendar1 = await API.graphql({ query: listCalEvents, variables: { limit: 100 }})
+        const setNextToken = calendar1.data.listCalEvents.nextToken
+        const setCalendar1 = calendar1.data.listCalEvents.items
+        // console.log("Token 1 " + setNextToken)
+
+        const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 100, nextToken: setNextToken }})
+        const setCalendar2 = calendar2.data.listCalEvents.items
+        // const setNextToken2 = calendar2.data.listCalEvents.nextToken
+        // console.log("Token 2 " + setNextToken2)
+
+        var calendars = setCalendar1.concat(setCalendar2)
+        // var calendars = setCalendar1
+        // const eventsorig = calendars.data.listCalEvents.items;
+        const eventsorig = calendars;
         let events = []
         let ce = eventsorig
         ce.forEach(doc => {
@@ -742,7 +765,7 @@ export default {
       // if customer
       } else {
         let filter = {owner2: {eq: this.userProps}};
-        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
+        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 300, filter: filter }});
 
         const eventsorig = calendars.data.listCalEvents.items;
         let events = []
