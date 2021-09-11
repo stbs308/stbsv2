@@ -654,7 +654,7 @@ export default {
       // if user is technician
       if (this.categories.indexOf(this.userProps) >= 0) {
         let filter = {category: {eq: this.userProps}};
-        const calendars = await API.graphql({ query: listCalEvents, variables: { filter: filter }});
+        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
         const eventsorig = calendars.data.listCalEvents.items;
         let events = []
         let ce = eventsorig
@@ -701,7 +701,7 @@ export default {
 
       // if user is admin
       } else if (this.userProps === 'admin'){
-        const calendars = await API.graphql({ query: listCalEvents });
+        const calendars = await API.graphql({ query: listCalEvents, variables: {limit: 1000} });
         // this.events = calendars.data.listCalEvents.items;
 
         const eventsorig = calendars.data.listCalEvents.items;
@@ -742,7 +742,7 @@ export default {
       // if customer
       } else {
         let filter = {owner2: {eq: this.userProps}};
-        const calendars = await API.graphql({ query: listCalEvents, variables: { filter: filter }});
+        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
 
         const eventsorig = calendars.data.listCalEvents.items;
         let events = []

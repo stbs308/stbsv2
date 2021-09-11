@@ -61,7 +61,7 @@ export const listCalEvents = /* GraphQL */ `
     $limit: Int
     $nextToken: String
   ) {
-    listCalEvents(filter: $filter, limit: 1000, nextToken: $nextToken) {
+    listCalEvents(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         name
