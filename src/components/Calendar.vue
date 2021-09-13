@@ -657,9 +657,38 @@ export default {
     async getCalEvents() {
       // if user is technician
       if (this.categories.indexOf(this.userProps) >= 0) {
+        // Using the below for now but should move to the new PartiSQL of AWS DynamoDB
+        // calendar 1 is the retrieval of the first 1000 fetches; calendar 2 is the second 1000 fetches... and so on
+        // When "Start Preparing for calendar4" is seen in console log, must do something to avoid having data to disappear
+
         let filter = {category: {eq: this.userProps}};
-        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
-        const eventsorig = calendars.data.listCalEvents.items;
+        const calendar1 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
+        this.setNextToken = calendar1.data.listCalEvents.nextToken
+        const setCalendar1 = calendar1.data.listCalEvents.items
+        this.calendars = setCalendar1
+
+        //calendar 2
+        if(this.setNextToken !== null){
+          const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
+          const setCalendar2 = calendar2.data.listCalEvents.items
+          this.setNextToken = calendar2.data.listCalEvents.nextToken
+          console.log("Tech - Start Preparing for calendar3")
+          this.calendars = setCalendar1.concat(setCalendar2)
+        } else {
+          console.log("Tech - Not using calendar 2 yet")
+        }
+
+        // calendar 3
+        if(this.setNextToken !== null){
+          const calendar3 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
+          const setCalendar3 = calendar3.data.listCalEvents.items
+          this.setNextToken = calendar3.data.listCalEvents.nextToken
+          console.log("Tech - Start Preparing for calendar4")
+          this.calendars = this.calendars.concat(setCalendar3)
+        } else {
+          console.log("Tech - Not using calendar 3 yet")
+        }
+        const eventsorig = this.calendars
         let events = []
         let ce = eventsorig
         ce.forEach(doc => {
@@ -773,9 +802,38 @@ export default {
       // if customer
       } else {
         let filter = {owner2: {eq: this.userProps}};
-        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
+        // Using the below for now but should move to the new PartiSQL of AWS DynamoDB
+        // calendar 1 is the retrieval of the first 1000 fetches; calendar 2 is the second 1000 fetches... and so on
+        // When "Start Preparing for calendar4" is seen in console log, must do something to avoid having data to disappear
 
-        const eventsorig = calendars.data.listCalEvents.items;
+        const calendar1 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
+        this.setNextToken = calendar1.data.listCalEvents.nextToken
+        const setCalendar1 = calendar1.data.listCalEvents.items
+        this.calendars = setCalendar1
+
+        //calendar 2
+        if(this.setNextToken !== null){
+          const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
+          const setCalendar2 = calendar2.data.listCalEvents.items
+          this.setNextToken = calendar2.data.listCalEvents.nextToken
+          console.log("Cust - Start Preparing for calendar3")
+          this.calendars = setCalendar1.concat(setCalendar2)
+        } else {
+          console.log("Cust - Not using calendar 2 yet")
+        }
+
+        // calendar 3
+        if(this.setNextToken !== null){
+          const calendar3 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
+          const setCalendar3 = calendar3.data.listCalEvents.items
+          this.setNextToken = calendar3.data.listCalEvents.nextToken
+          console.log("Cust - Start Preparing for calendar4")
+          this.calendars = this.calendars.concat(setCalendar3)
+        } else {
+          console.log("Cust - Not using calendar 3 yet")
+        }
+
+        const eventsorig = this.calendars
         let events = []
         let ce = eventsorig
         ce.forEach(doc => {
