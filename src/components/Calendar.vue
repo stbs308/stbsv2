@@ -396,6 +396,7 @@ export default {
       v => (new Date().setHours(0,0,0,0)) <= (new Date(v.replace(/-/g, '/')).setHours(0,0,0,0)) || 'Date must be today or newer'
     ],
     // corners_complex: ['east', 'west'],
+    calendars: undefined,
     dialogFind: false,
     dialog_color: null,
     copyDelete: "on",
@@ -468,6 +469,7 @@ export default {
       { text: '', value: 'data-table-expand' },
     ],
     invalidDate: false,
+    setNextToken: undefined,
     today: new Date(),
     dialogDeleteConfirmation: false,
     dialogCancelConfirmation: false,
@@ -517,6 +519,7 @@ export default {
                 this.newJobAlert = true;   
                 console.log("**** alert ")
             }
+            // Fix this to refresh only newly created data and rest of other subcriptions
             this.getCalEvents()
             console.log("subs on create")
             this.copyDelete='on'
@@ -573,6 +576,7 @@ export default {
             this.getCalEvents()
           }, error: error => console.warn(error)
         });
+        
         API.graphql(
           graphqlOperation(techOnUpdateCalEvent, {
           category: this.userProps
@@ -654,10 +658,7 @@ export default {
       // if user is technician
       if (this.categories.indexOf(this.userProps) >= 0) {
         let filter = {category: {eq: this.userProps}};
-
-        // page 1 of query
-        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 300, filter: filter }});
-
+        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
         const eventsorig = calendars.data.listCalEvents.items;
         let events = []
         let ce = eventsorig
@@ -704,30 +705,38 @@ export default {
 
       // if user is admin
       } else if (this.userProps === 'admin'){
-        // const calendars = await API.graphql({ query: listCalEvents, variables: {limit: 300} });
-        // this.events = calendars.data.listCalEvents.items;
+        // Using the below for now but should move to the new PartiSQL of AWS DynamoDB
+        // calendar 1 is the retrieval of the first 1000 fetches; calendar 2 is the second 1000 fetches... and so on
+        // When "Start Preparing for calendar4" is seen in console log, must do something to avoid having data to disappear
 
-
-let n = 0;
-while (n < 3) { n++;}
-
-console.log(n);
-
-
-        const calendar1 = await API.graphql({ query: listCalEvents, variables: { limit: 100 }})
-        const setNextToken = calendar1.data.listCalEvents.nextToken
+        const calendar1 = await API.graphql({ query: listCalEvents, variables: { limit: 1000 }});
+        this.setNextToken = calendar1.data.listCalEvents.nextToken
         const setCalendar1 = calendar1.data.listCalEvents.items
-        // console.log("Token 1 " + setNextToken)
+        this.calendars = setCalendar1
 
-        const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 100, nextToken: setNextToken }})
-        const setCalendar2 = calendar2.data.listCalEvents.items
-        // const setNextToken2 = calendar2.data.listCalEvents.nextToken
-        // console.log("Token 2 " + setNextToken2)
+        // calendar 2
+        if(this.setNextToken !== null){
+          const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, nextToken: this.setNextToken }});
+          const setCalendar2 = calendar2.data.listCalEvents.items
+          this.setNextToken = calendar2.data.listCalEvents.nextToken
+          console.log("Start Preparing for calendar3")
+          this.calendars = setCalendar1.concat(setCalendar2)
+        } else {
+          console.log("Not using calendar 2 yet")
+        }
 
-        var calendars = setCalendar1.concat(setCalendar2)
-        // var calendars = setCalendar1
-        // const eventsorig = calendars.data.listCalEvents.items;
-        const eventsorig = calendars;
+        // calendar 3
+        if(this.setNextToken !== null){
+          const calendar3 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, nextToken: this.setNextToken }});
+          const setCalendar3 = calendar3.data.listCalEvents.items
+          this.setNextToken = calendar3.data.listCalEvents.nextToken
+          console.log("Start Preparing for calendar4")
+          this.calendars = this.calendars.concat(setCalendar3)
+        } else {
+          console.log("Not using calendar 3 yet")
+        }
+
+        const eventsorig = this.calendars;
         let events = []
         let ce = eventsorig
         ce.forEach(doc => {
@@ -761,11 +770,10 @@ console.log(n);
           })
         })
         this.events = events.sort((a,b) => a.name.localeCompare(b.name))
-
       // if customer
       } else {
         let filter = {owner2: {eq: this.userProps}};
-        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 300, filter: filter }});
+        const calendars = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
 
         const eventsorig = calendars.data.listCalEvents.items;
         let events = []
@@ -855,7 +863,8 @@ console.log(n);
         this.showError = true
         this.dialog_color = 'red lighten-5'
       }
-      this.getCalEvents()
+      // EH 1
+      // this.getCalEvents()
 
     },
     resetError(){
@@ -883,30 +892,26 @@ console.log(n);
     editEvent(ev) {
       this.currentlyEditing = ev.id;
     },
+    async cancelEvent(ev) {
+      ev.color = "grey";
+      ev.note_code = "CANC"
+      console.log("canc log" + ev.start_date)
+
+      const calEventDetails = {
+        id: ev.id,
+        color: ev.color,
+        note_code: ev.note_code,
+        name: "CANCELLED " + "- " + ev.name
+      };
+      await API.graphql({ query: updateCalEvent, variables: { input: calEventDetails }})
+
+      this.selectedOpen = false;
+      this.dialogCancelConfirmation = false;
+      this.currentlyEditing = null;
+    },
     async updateEvent(ev) {
-      this.copyDelete="on"
-      // console.log("******* start data **** ")
-      // console.log("this.admin_notes - " + this.category)
-      // console.log("this.before_admin_notes_value - " + this.before_admin_notes_value)
-      // console.log("this.selectedEvent.admin_notes - " + this.selectedEvent.admin_notes)
-      // console.log("ev.admin_notes - " + ev.admin_notes)
-      // console.log("==== Color ====")
-      // console.log("this.color - " + this.color)
-      // console.log("this.selectedEvent.color - " + this.selectedEvent.color)
-      // console.log("ev.color - " + ev.color)
-      // console.log("==== Technician ====")
-      // console.log("this.category - " + this.category)
-      // console.log("this.before_category_value - " + this.before_category_value)
-      // console.log("this.selectedEvent.category - " + this.selectedEvent.category)
-      // console.log("ev.category - " + ev.category)
-      // console.log("---------------------------")
-
-      // console.log(ev.note_code)
-      // console.log(this.note_code)
-
-      // if COMP, save whatever notes are entered
-
-      //eh2
+      this.copyDelete="on"  
+      console.log("update log" + ev.start_date)
       if(ev.note_code==='COMP'){
         console.log("***** completed section ")
         this.color='blue'
@@ -1051,44 +1056,14 @@ console.log(n);
           }
         await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
 
-      // if no rule applies, make color black
-      // else { 
-      //   this.color='black'
-      //   console.log("no rule applied")
-
-      //     const calEventDetails = {
-      //     id: this.currentlyEditing,
-      //     color: this.color,
-      //     }
-      //   await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
-      //   }
-      // *** EH ensuring that before value takes on the new value before another value is added... issue seen when technician r note changed multiple times n then back to original value
-      // this.before_category_value = this.selectedEvent.category
-      // this.before_details_value = this.selectedEvent.details
-      // this.before_emp_notes_value = this.selectedEvent.emp_notes
-      // this.before_admin_notes_value = this.selectedEvent.admin_notes
-
       // B should end here
       
       this.selectedOpen = false;
       this.currentlyEditing = null;
-      this.getCalEvents()
-      
-        // console.log("---------------------------")
-        // console.log("------ end ------")
-        // console.log("this.admin_notes - " + this.category)
-        // console.log("this.before_admin_notes_value - " + this.before_admin_notes_value)
-        // console.log("this.selectedEvent.admin_notes - " + this.selectedEvent.admin_notes)
-        // console.log("ev.admin_notes - " + ev.admin_notes)
-        // console.log("==== Color ====")
-        // console.log("this.color - " + this.color)
-        // console.log("this.selectedEvent.color - " + this.selectedEvent.color)
-        // console.log("ev.color - " + ev.color)
-        // console.log("==== Technician ====")
-        // console.log("this.category - " + this.category)
-        // console.log("this.before_category_value - " + this.before_category_value)
-        // console.log("this.selectedEvent.category - " + this.selectedEvent.category)
-        // console.log("ev.category - " + ev.category)
+
+      // EH2
+      // this.getCalEvents()
+
     },
     async duplicateEvent(ev){
       // const calEventDetailsDel = { id: ev.id };
@@ -1131,29 +1106,6 @@ console.log(n);
       this.currentlyEditing = null
 
     },
-    async cancelEvent(ev) {
-      ev.color = "grey";
-      ev.category = null;
-      ev.note_code = "CANC"
-
-      const calEventDetails = {
-        id: ev.id,
-        color: ev.color,
-        category: ev.category,
-        note_code: ev.note_code,
-        name: "CANCELLED " + "- " + ev.name
-      };
-
-      await API.graphql({
-        query: updateCalEvent,
-        variables: { input: calEventDetails },
-      });
-
-      this.selectedOpen = false;
-      this.dialogCancelConfirmation = false;
-      this.currentlyEditing = null;
-      this.getCalEvents();
-    },
     async completeEvent(ev) {
       ev.color = "blue";
       ev.note_code = "COMP"
@@ -1165,15 +1117,15 @@ console.log(n);
         // name: "COMPLETED " + "- " + ev.name
       };
 
-      await API.graphql({
-        query: updateCalEvent,
-        variables: { input: calEventDetails },
-      });
+      await API.graphql({ query: updateCalEvent, variables: { input: calEventDetails }})
       this.dialogCompleteConfirmation = false;
       this.selectedOpen = false;
       this.currentlyEditing = null;
-      this.getCalEvents();
+
+      // EH3
+      // this.getCalEvents();
     },
+
     async ackEvent(ev) {
       if (ev.category !== null) {
         ev.color = "black";
@@ -1291,6 +1243,7 @@ console.log(n);
 
 
     // },
+    // updateRange is needed for when a date is clicked n day view opens up, it gets refreshed
     updateRange({ start, end }) {
       const events = [];
 
@@ -1316,6 +1269,7 @@ console.log(n);
       }
 
       this.events = events;
+
       this.getCalEvents();
     },
     rnd(a, b) {
@@ -1359,7 +1313,4 @@ console.log(n);
 .selected {
     background-color: blue
 }
-/* .v-calendar-daily__scroll-area {
-  overflow-y: scroll !important;
-} */
 </style>
