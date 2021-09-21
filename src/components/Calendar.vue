@@ -133,6 +133,7 @@
                     <v-radio-group v-model="time_of_day" column>
                       <v-radio label="AM" color="blue" value="AM"></v-radio>
                       <v-radio label="PM" color="blue " value="PM"></v-radio>
+                      <v-radio label="Anytime" color="blue " value="Anytime"></v-radio>
                     </v-radio-group>
                   </v-col>
                   <v-col cols="12" sm="4" md="4">
@@ -213,7 +214,7 @@
             <v-card-text>
               <!-- View Selected Event -->
               <form v-if="currentlyEditing !== selectedEvent.id">
-                <div v-if="userProps === 'admin' || userProps === selectedEvent.owner2">
+                <div>
                   <h3>Customer Notes</h3>
                   {{ selectedEvent.details }}
                 </div>
@@ -306,7 +307,7 @@
                 >Acknowledge</v-btn
               >
               <v-spacer></v-spacer>
-              <v-btn text v-if="selectedEvent.color === 'black' && categories.includes(userProps)" @click="dialogCompleteConfirmation = true">Completed</v-btn>
+              <v-btn text v-if="selectedEvent.color === 'black' && categories.includes(userProps)" @click="dialogCompleteConfirmation = true">Done</v-btn>
             </v-card-actions>
           </v-card>
           <!-- Delete Confirmation -->
@@ -434,11 +435,11 @@ export default {
     apt_statuss: ["Occupied","Vacant"],
     service_categories: ["Carpet","Housekeeping","Paint","Other"],
     category: null,
-    categories: ["cesar","conrrado","eduardo","jose","martin","pablo","resurface","sury","yamileth","technician1","technician2"],    
+    categories: ["carlos-doris","cesar","conrrado","eduardo","hugo","jose","martin","pablo","resurface","sury","yamileth","technician1","technician2"],    
     selectedEmp: [],
     newJobAlert: false,
     owner2: null,
-    owners: ["apex","arlington","ash","aura","bnf","cedar","chase","corners","corners-east","dakota","drey","durham","gate","gateway","hill","holston","huntington","interurban","kace","live-oaks","loftrow","lucas","magnmay","northbridge","park","radius","riviera","stonebriar","teak","tealwood","truman","customer1","customer2"],
+    owners: ["apex","arlington","ash","aura","bnf","cedar","chase","corners","corners-east","dakota","drey","durham","gate","gateway","hill","holston","huntington","interurban","kace","live-oaks","loftrow","lucas","magnmay","northbridge","park","radius","riviera","stonebriar","teak","tealwood","truman","uppereastside","customer1","customer2"],
     note_code: null,
     search: '',
     headers: [
@@ -706,7 +707,7 @@ export default {
               this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
               this.color = doc.color
           } else if (doc.note_code === 'COMP'){
-              this.name = "COMPLETED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+              this.name = "DONE - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
               this.color = doc.color
           } else {
             this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
@@ -773,7 +774,7 @@ export default {
               this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
               this.color = doc.color
           } else if (doc.note_code === 'COMP'){
-              this.name = "COMPLETED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+              this.name = "DONE - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
               this.color = doc.color
           } else if(doc.category === null){
               this.name=doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
@@ -842,7 +843,7 @@ export default {
             this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
             this.color = 'grey'
           } else if (doc.note_code === 'COMP'){
-            this.name = "COMPLETED - " + doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+            this.name = "DONE - " + doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
             this.color = 'blue'
           // if not cancelled, then show only customer pertinent information
           } else {
