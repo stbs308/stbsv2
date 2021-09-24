@@ -205,7 +205,7 @@
           offset-x
           :open-on-click="false"
         >
-          <v-card color="grey lighten-4" flat>
+          <v-card color="grey lighten-4" flat class="mb-5">
             <v-toolbar :color="selectedEvent.color" dark>
               <v-btn v-if="userProps === 'admin'" @click.prevent="dialogDeleteConfirmation = true" icon><v-icon>mdi-delete</v-icon></v-btn>
               <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
@@ -1300,10 +1300,6 @@ export default {
       this.$refs.calendar.next();
     },
     showEvent({ nativeEvent, event }) {
-
-      console.log("you clicked showEvent")
-      // console.log("this.selectedEventcolor = " + this.selectedEvent.color)
-      // console.log("this.event.color = " + event.color)
       const open = () => {
         this.selectedEvent = event;
         this.selectedElement = nativeEvent.currentTarget;
@@ -1322,40 +1318,7 @@ export default {
       this.before_emp_notes_value = this.selectedEvent.emp_notes;
       this.before_admin_notes_value = this.selectedEvent.admin_notes;
       this.before_category_value = this.selectedEvent.category;
-      // this.before_color_value = this.selectedEvent.color
-
-
     },
-    // showEventTable({ row }) {
-       
-    //   this.events.map((item, index) => {
-    //     item.selected = item === row
-
-    //     this.$set(this.events, index, item)
-    // })
-
-
-    //   const open = () => {
-    //     this.selectedEvent = event;
-    //     setTimeout(() => (this.selectedOpen = true), 10);
-    //   };
-
-    //   if (this.selectedOpen) {
-    //     this.selectedOpen = false;
-    //     setTimeout(open, 10);
-    //   } else {
-    //     open();
-    //   }
-
-    //   this.before_details_value = this.selectedEvent.details;
-    //   this.before_emp_notes_value = this.selectedEvent.emp_notes;
-    //   this.before_admin_notes_value = this.selectedEvent.admin_notes;
-    //   this.before_category_value = this.selectedEvent.category;
-    //   this.before_color_value = this.selectedEvent.color
-
-
-    // },
-    // updateRange is needed for when a date is clicked n day view opens up, it gets refreshed
     updateRange({ start, end }) {
       const events = [];
 
@@ -1387,37 +1350,6 @@ export default {
     rnd(a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a;
     },
-//     handleClick(row) {
-//       this.selectedOpen = true
-//     // set active row and deselect others
-//     this.events.map((item, index) => {
-//         item.selected = item === row
-
-//         this.$set(this.events, index, item)
-//     })
-
-//     // or just do something with your current clicked row item data
-//     this.selectedEvent.id = row.id
-//     this.selectedEvent.owner2 = row.owner2
-//     this.selectedEvent.details = row.details
-
-//     console.log(row.owner2)
-// },
-  //   compareDateRules(){
-  //     return [
-  //     v => !!v || 'Date is required',
-  //     v => new Date().setHours(0,0,0,0) > new Date(v.replace) || 'Date must be today or newer'
-  //   ]
-
-  //   },
-  //   getFormattedDate(date) {
-  //     this.today = this.getFormattedDate(this.today)
-  //     let year = date.getFullYear();
-  //     let month = (1 + date.getMonth()).toString().padStart(2, '0');
-  //     let day = date.getDate().toString().padStart(2, '0');
-  
-  //     return month + '/' + day + '/' + year;
-  //   }
   },
 };
 </script>
