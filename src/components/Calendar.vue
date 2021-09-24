@@ -462,6 +462,7 @@ export default {
       { text: 'Customer', value: 'owner2' },
       { text: 'Technician', value: 'category' },
       { text: 'Apt No.', value: 'apt_num' },
+      { text: 'Color', value: 'color' },
       { text: 'Time of Day', value: 'time_of_day' },
       { text: 'Service', value: 'service_category' },
       { text: 'Status', value: 'apt_status' },
