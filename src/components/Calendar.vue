@@ -205,7 +205,7 @@
           offset-x
           :open-on-click="false"
         >
-          <v-card color="grey lighten-4" flat class="mb-5">
+          <v-card color="grey lighten-4" flat class="mb-6">
             <v-toolbar :color="selectedEvent.color" dark>
               <v-btn v-if="userProps === 'admin'" @click.prevent="dialogDeleteConfirmation = true" icon><v-icon>mdi-delete</v-icon></v-btn>
               <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
