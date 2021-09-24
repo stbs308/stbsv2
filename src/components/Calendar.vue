@@ -308,6 +308,7 @@
               >
               <v-spacer></v-spacer>
               <v-btn text v-if="selectedEvent.color === 'black' && categories.includes(userProps)" @click="dialogCompleteConfirmation = true">Done</v-btn>
+              <v-btn text v-if="selectedEvent.color === 'blue' && userProps === 'admin'" @click="dialogInvoiceConfirmation = true">Invoice</v-btn>
             </v-card-actions>
           </v-card>
           <!-- Delete Confirmation -->
@@ -348,6 +349,20 @@
                   <v-spacer></v-spacer>
                   <v-btn text @click="dialogCompleteConfirmation = false">Close</v-btn>
                   <v-btn color="blue" text @click="completeEvent(selectedEvent)">Confirm Complete</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-row>
+          <!-- Invoice Confirmation -->
+          <v-row justify="center">
+            <v-dialog v-model="dialogInvoiceConfirmation" persistent max-width="290">
+              <v-card>
+                <v-card-title class="green headline" style="font-weight:bold; color:white;">Confirm Invoice</v-card-title>
+                <v-card-text>Are you sure you want to set status to invoice? This cannot be undone.</v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn text @click="dialogInvoiceConfirmation = false">Close</v-btn>
+                  <v-btn color="green" text @click="invoiceEvent(selectedEvent)">Confirm Invoice</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -405,7 +420,7 @@ export default {
     showError: false,
     diffInDays: null,
     service_category: null,
-    apt_num: " ",
+    apt_num: "",
     apt_status: null,
     before_details_value: null,
     before_emp_notes_value: null,
@@ -475,6 +490,7 @@ export default {
     dialogDeleteConfirmation: false,
     dialogCancelConfirmation: false,
     dialogCompleteConfirmation: false,
+    dialogInvoiceConfirmation: false,
     singleExpand: false,
     expanded:[]
   }),
@@ -706,6 +722,9 @@ export default {
           } else if (doc.note_code === 'CANC'){
               this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
               this.color = doc.color
+          } else if (doc.note_code === 'INV'){
+              this.name = "INV - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+              this.color = doc.color
           } else if (doc.note_code === 'COMP'){
               this.name = "DONE - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
               this.color = doc.color
@@ -772,6 +791,9 @@ export default {
         ce.forEach(doc => {
           if (doc.note_code === 'CANC'){
               this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+              this.color = doc.color
+          } else if (doc.note_code === 'INV'){
+              this.name = "INV - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
               this.color = doc.color
           } else if (doc.note_code === 'COMP'){
               this.name = "DONE - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
@@ -842,6 +864,9 @@ export default {
           if (doc.note_code === 'CANC'){
             this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
             this.color = 'grey'
+          } else if (doc.note_code === 'INV'){
+            this.name = "INV - " + doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+            this.color = 'green'
           } else if (doc.note_code === 'COMP'){
             this.name = "DONE - " + doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
             this.color = 'blue'
@@ -942,7 +967,7 @@ export default {
       this.admin_notes = null
       this.emp_notes = null
       this.category = null
-      this.apt_num = " "
+      this.apt_num = null
       this.apt_status = null
       this.service_category = null
       this.selectedEvent = {}
@@ -970,9 +995,17 @@ export default {
     },
     async updateEvent(ev) {
       this.copyDelete="on"  
-      console.log("update log" + ev.start_date)
-      if(ev.note_code==='COMP'){
-        console.log("***** completed section ")
+      if(ev.note_code==='INV'){
+        this.color='green'
+        this.note_code='INV'
+        const calEventDetails = {
+          id: this.currentlyEditing,
+          details: ev.details,
+          emp_notes: ev.emp_notes,
+          admin_notes: ev.admin_notes}
+        await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
+        // * if there's a change in technician assignment... ONLY ADMIN can perform this
+      } else if(ev.note_code==='COMP'){
         this.color='blue'
         this.note_code='COMP'
         const calEventDetails = {
@@ -1178,6 +1211,25 @@ export default {
 
       await API.graphql({ query: updateCalEvent, variables: { input: calEventDetails }})
       this.dialogCompleteConfirmation = false;
+      this.selectedOpen = false;
+      this.currentlyEditing = null;
+
+      // EH3
+      // this.getCalEvents();
+    },
+    async invoiceEvent(ev) {
+      ev.color = "green";
+      ev.note_code = "INV"
+
+      const calEventDetails = {
+        id: ev.id,
+        color: ev.color,
+        note_code: ev.note_code,
+        // name: "COMPLETED " + "- " + ev.name
+      };
+
+      await API.graphql({ query: updateCalEvent, variables: { input: calEventDetails }})
+      this.dialogInvoiceConfirmation = false;
       this.selectedOpen = false;
       this.currentlyEditing = null;
 
