@@ -119,7 +119,13 @@
           <v-card v-bind:class="dialog_color">
             <v-container>
               <v-alert v-if="showError" dense type="error">Required info missed or wrong date chosen *</v-alert>
-                <v-text-field
+                <v-text-field v-if="userProps==='admin'"
+                  @click="resetError"
+                  v-model="start_date"
+                  type="date"
+                  label="Date of Service* (*=required)"
+                ></v-text-field>
+                <v-text-field v-else
                   @click="resetError"
                   v-model="start_date"
                   type="date"
@@ -939,7 +945,7 @@ export default {
 
       // Make field mandatory 
       // If user is admin and all info are available, then create record
-      if (this.userProps === 'admin' && this.apt_num && this.start && this.time_of_day && this.apt_status && this.service_category && (new Date().setHours(0,0,0,0)) <= (new Date(this.start_date.replace(/-/g, '/')).setHours(0,0,0,0)) && this.owner2 && this.category) {
+      if (this.userProps === 'admin' && this.apt_num && this.start && this.time_of_day && this.apt_status && this.service_category && this.owner2 && this.category) {
         await API.graphql({query: createCalEvent, variables: { input: calendar }});this.clearRecords()} 
       // Else if not admin and user with customer info, create record
       else if (this.userProps !== 'admin' && this.apt_num && this.start && this.time_of_day && this.apt_status && this.service_category && (new Date().setHours(0,0,0,0)) <= (new Date(this.start_date.replace(/-/g, '/')).setHours(0,0,0,0))){
