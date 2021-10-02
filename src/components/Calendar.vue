@@ -1211,6 +1211,7 @@ export default {
 
       const calEventDetails = {
         id: ev.id,
+        emp_notes: ev.emp_notes,
         color: ev.color,
         note_code: ev.note_code,
         // name: "COMPLETED " + "- " + ev.name
