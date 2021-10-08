@@ -456,7 +456,7 @@ export default {
     apt_statuss: ["Occupied","Vacant"],
     service_categories: ["Carpet","Housekeeping","Paint","Other"],
     category: null,
-    categories: ["carlos-doris","cesar","conrrado","eduardo","hugo","jose","martin","pablo","resurface","sury","yamileth","technician1","technician2"],    
+    categories: ["carlos-doris","cesar","conrrado","eduardo","hugo","jose","karen","manuel","martin","pablo","resurface","technician1","technician2"],    
     selectedEmp: [],
     newJobAlert: false,
     owner2: null,
