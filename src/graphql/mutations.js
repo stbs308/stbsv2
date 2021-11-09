@@ -65,6 +65,7 @@ export const createCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -93,6 +94,7 @@ export const updateCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -121,6 +123,7 @@ export const deleteCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner

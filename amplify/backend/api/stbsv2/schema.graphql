@@ -27,6 +27,7 @@ type calEvent @model @auth(rules: [
     service_category: String
     owner2: String
     note_code: String
+    created_by: String
   }
 
   type Subscription {

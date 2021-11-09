@@ -20,6 +20,7 @@ export const newOnCreateCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -45,6 +46,7 @@ export const newOnUpdateCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -70,6 +72,7 @@ export const newOnDeleteCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -95,6 +98,7 @@ export const techOnCreateCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -120,6 +124,7 @@ export const techOnUpdateCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -145,6 +150,7 @@ export const techOnDeleteCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -170,6 +176,7 @@ export const custOnCreateCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -195,6 +202,7 @@ export const custOnUpdateCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -220,6 +228,7 @@ export const custOnDeleteCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -278,6 +287,7 @@ export const onCreateCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -303,6 +313,7 @@ export const onUpdateCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -328,6 +339,7 @@ export const onDeleteCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner

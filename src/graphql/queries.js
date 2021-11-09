@@ -49,6 +49,7 @@ export const getCalEvent = /* GraphQL */ `
       service_category
       owner2
       note_code
+      created_by
       createdAt
       updatedAt
       owner
@@ -79,6 +80,7 @@ export const listCalEvents = /* GraphQL */ `
         service_category
         owner2
         note_code
+        created_by
         createdAt
         updatedAt
         owner

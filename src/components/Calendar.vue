@@ -170,14 +170,13 @@
                   type="text"
                   label="Job Detail"
                 ></v-text-field>
+                <v-text-field v-model="created_by" type="text" label="Created By"></v-text-field>
                 <v-btn
                   type="submit"
                   color="primary"
                   class="mr-4"
                   @click.prevent="createEvent"
-                  >Create Event</v-btn
-                >
-
+                  >Create Event</v-btn>
             </v-container>
           </v-card>
         </v-dialog>
@@ -209,8 +208,7 @@
           :close-on-content-click="false"
           :activator="selectedElement"
           offset-x
-          :open-on-click="false"
-        >
+          :open-on-click="false">
           <v-card color="grey lighten-4" flat class="mb-6">
             <v-toolbar :color="selectedEvent.color" dark>
               <v-btn v-if="userProps === 'admin'" @click.prevent="dialogDeleteConfirmation = true" icon><v-icon>mdi-delete</v-icon></v-btn>
@@ -236,6 +234,11 @@
                   <div v-if="!categories.includes(userProps)">
                     <h3>Technician Name</h3>
                     {{ selectedEvent.category }}
+                  </div>
+                  <p></p>
+                  <div v-if="!categories.includes(userProps)">
+                    <h3>Created By</h3>
+                    {{ selectedEvent.created_by }}
                   </div>
                 </div>
               </form>
@@ -418,6 +421,7 @@ export default {
       v => (new Date().setHours(0,0,0,0)) <= (new Date(v.replace(/-/g, '/')).setHours(0,0,0,0)) || 'Date must be today or newer'
     ],
     // corners_complex: ['east', 'west'],
+    created_by: "",
     calendars: undefined,
     dialogFind: false,
     dialog_color: null,
@@ -754,7 +758,8 @@ export default {
             time_of_day: doc.time_of_day,
             apt_num: doc.apt_num,
             apt_status: doc.apt_status,
-            service_category: doc.service_category
+            service_category: doc.service_category,
+            created_by: doc.created_by
           })
         })
         this.events = events.sort((a,b) => a.name.localeCompare(b.name))
@@ -825,7 +830,8 @@ export default {
             time_of_day: doc.time_of_day,
             apt_num: doc.apt_num,
             apt_status: doc.apt_status,
-            service_category: doc.service_category
+            service_category: doc.service_category,
+            created_by: doc.created_by
           })
         })
         this.events = events.sort((a,b) => a.name.localeCompare(b.name))
@@ -898,7 +904,8 @@ export default {
             time_of_day: doc.time_of_day,
             apt_num: doc.apt_num,
             apt_status: doc.apt_status,
-            service_category: doc.service_category
+            service_category: doc.service_category,
+            created_by: doc.created_by
           })
         })
         this.events = events.sort((a,b) => a.name.localeCompare(b.name))
@@ -940,9 +947,9 @@ export default {
       // console.log(this.end)
       // this.name2 = this.service_category + " - " + this.apt_num + " - " + this.apt_status;
       this.name =""
-      const { name, details, start, end, time_of_day, color, category, owner2, service_category, apt_num, apt_status } = this;
-      const calendar = { name, details, start, end, time_of_day, color, category, owner2, service_category, apt_num, apt_status };
-
+      const { name, details, start, end, time_of_day, color, category, owner2, service_category, apt_num, apt_status, created_by } = this;
+      const calendar = { name, details, start, end, time_of_day, color, category, owner2, service_category, apt_num, apt_status, created_by };
+    
       // Make field mandatory 
       // If user is admin and all info are available, then create record
       if (this.userProps === 'admin' && this.apt_num && this.start && this.time_of_day && this.apt_status && this.service_category && this.owner2 && this.category) {
