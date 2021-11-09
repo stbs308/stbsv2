@@ -1149,7 +1149,12 @@ export default {
         else {
           // *** C7 Nothing changed
           console.log("C7")
-          this.color=ev.color
+          if(!this.category){
+            this.color = 'red'
+          } else {
+            this.color=ev.color
+          }
+          
           this.note_code=ev.note_code
         }
         const calEventDetails = {
