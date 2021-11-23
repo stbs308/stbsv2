@@ -1149,7 +1149,7 @@ export default {
         else {
           // *** C7 Nothing changed
           console.log("C7")
-          if(!this.category){
+          if(!this.selectedEvent.category){
             this.color = 'red'
           } else {
             this.color=ev.color
