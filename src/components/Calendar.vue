@@ -307,7 +307,7 @@
               </div>
               <v-btn text v-else @click.prevent="updateEvent(selectedEvent)">Save</v-btn>
               <v-btn text
-                v-if="!categories.includes(userProps) && userProps !== 'admin' && selectedEvent.note_code !== 'CANC' && selectedEvent.note_code !== 'COMP'"
+                v-if="!categories.includes(userProps) && userProps !== 'admin' && selectedEvent.note_code !== 'CANC' && selectedEvent.note_code !== 'COMP' && selectedEvent.note_code !== 'INV'"
                 @click.prevent="dialogCancelConfirmation = true">Cancel Job</v-btn>
               <v-btn
                 text
