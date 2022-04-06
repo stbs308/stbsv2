@@ -521,7 +521,7 @@ export default {
   },
   mounted() {
     this.$refs.calendar.checkChange();
-    this.getCalEvents();
+    // this.getCalEvents();
     if (this.categories.indexOf(this.userProps) >= 0){
       this.type='day'
     } 
@@ -695,27 +695,34 @@ export default {
         const setCalendar1 = calendar1.data.listCalEvents.items
         this.calendars = setCalendar1
 
-        //calendar 2
-        if(this.setNextToken !== null){
+
+        while(this.setNextToken !== null){
           const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
           const setCalendar2 = calendar2.data.listCalEvents.items
           this.setNextToken = calendar2.data.listCalEvents.nextToken
-          console.log("Tech - Start Preparing for calendar3")
           this.calendars = setCalendar1.concat(setCalendar2)
-        } else {
-          console.log("Tech - Not using calendar 2 yet")
         }
+        //calendar 2
+        // if(this.setNextToken !== null){
+        //   const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
+        //   const setCalendar2 = calendar2.data.listCalEvents.items
+        //   this.setNextToken = calendar2.data.listCalEvents.nextToken
+        //   console.log("Tech - Start Preparing for calendar3")
+        //   this.calendars = setCalendar1.concat(setCalendar2)
+        // } else {
+        //   console.log("Tech - Not using calendar 2 yet")
+        // }
 
         // calendar 3
-        if(this.setNextToken !== null){
-          const calendar3 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
-          const setCalendar3 = calendar3.data.listCalEvents.items
-          this.setNextToken = calendar3.data.listCalEvents.nextToken
-          console.log("Tech - Start Preparing for calendar4")
-          this.calendars = this.calendars.concat(setCalendar3)
-        } else {
-          console.log("Tech - Not using calendar 3 yet")
-        }
+        // if(this.setNextToken !== null){
+        //   const calendar3 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
+        //   const setCalendar3 = calendar3.data.listCalEvents.items
+        //   this.setNextToken = calendar3.data.listCalEvents.nextToken
+        //   console.log("Tech - Start Preparing for calendar4")
+        //   this.calendars = this.calendars.concat(setCalendar3)
+        // } else {
+        //   console.log("Tech - Not using calendar 3 yet")
+        // }
         const eventsorig = this.calendars
         let events = []
         let ce = eventsorig
@@ -774,28 +781,39 @@ export default {
         this.setNextToken = calendar1.data.listCalEvents.nextToken
         const setCalendar1 = calendar1.data.listCalEvents.items
         this.calendars = setCalendar1
+        console.log("admin setCalendar1")
+        console.log(this.setNextToken)
 
-        // calendar 2
-        if(this.setNextToken !== null){
-          const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, nextToken: this.setNextToken }});
+        while(this.setNextToken !== null){
+          let calendar2 = null
+          calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 600, nextToken: this.setNextToken }});
           const setCalendar2 = calendar2.data.listCalEvents.items
           this.setNextToken = calendar2.data.listCalEvents.nextToken
-          console.log("Start Preparing for calendar3")
-          this.calendars = setCalendar1.concat(setCalendar2)
-        } else {
-          console.log("Not using calendar 2 yet")
+          this.calendars = this.calendars.concat(setCalendar2)
+          console.log("while loop")
         }
 
+        // calendar 2
+        // if(this.setNextToken !== null){
+        //   const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, nextToken: this.setNextToken }});
+        //   const setCalendar2 = calendar2.data.listCalEvents.items
+        //   this.setNextToken = calendar2.data.listCalEvents.nextToken
+        //   console.log("Start Preparing for calendar3")
+        //   this.calendars = setCalendar1.concat(setCalendar2)
+        // } else {
+        //   console.log("Not using calendar 2 yet")
+        // }
+
         // calendar 3
-        if(this.setNextToken !== null){
-          const calendar3 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, nextToken: this.setNextToken }});
-          const setCalendar3 = calendar3.data.listCalEvents.items
-          this.setNextToken = calendar3.data.listCalEvents.nextToken
-          console.log("Start Preparing for calendar4")
-          this.calendars = this.calendars.concat(setCalendar3)
-        } else {
-          console.log("Not using calendar 3 yet")
-        }
+        // if(this.setNextToken !== null){
+        //   const calendar3 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, nextToken: this.setNextToken }});
+        //   const setCalendar3 = calendar3.data.listCalEvents.items
+        //   this.setNextToken = calendar3.data.listCalEvents.nextToken
+        //   console.log("Start Preparing for calendar4")
+        //   this.calendars = this.calendars.concat(setCalendar3)
+        // } else {
+        //   console.log("Not using calendar 3 yet")
+        // }
 
         const eventsorig = this.calendars;
         let events = []
