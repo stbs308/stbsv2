@@ -33,18 +33,27 @@
               ></template
             >
             <v-list>
-              <v-list-item @click="type = 'day'"><v-list-item-title>Day</v-list-item-title></v-list-item>
-              <v-list-item @click="type = 'week'"><v-list-item-title>Week</v-list-item-title></v-list-item>
-              <v-list-item @click="type = 'month'"><v-list-item-title>Month</v-list-item-title></v-list-item>
-              <v-list-item @click="type = '4day'"><v-list-item-title>4 days</v-list-item-title></v-list-item>
-              <v-list-item @click="setToday"><v-list-item-title>Go to Today</v-list-item-title></v-list-item>
+              <v-list-item @click="type = 'day'"
+                ><v-list-item-title>Day</v-list-item-title></v-list-item
+              >
+              <v-list-item @click="type = 'week'"
+                ><v-list-item-title>Week</v-list-item-title></v-list-item
+              >
+              <v-list-item @click="type = 'month'"
+                ><v-list-item-title>Month</v-list-item-title></v-list-item
+              >
+              <v-list-item @click="type = '4day'"
+                ><v-list-item-title>4 days</v-list-item-title></v-list-item
+              >
+              <v-list-item @click="setToday"
+                ><v-list-item-title>Go to Today</v-list-item-title></v-list-item
+              >
               <v-list-item
                 v-if="userProps === 'admin'"
                 @click="type = 'category'"
                 ><v-list-item-title>Employee</v-list-item-title></v-list-item
               >
-              <v-list-item
-                @click="dialogFind = true"
+              <v-list-item @click="dialogFind = true"
                 ><v-list-item-title>Search</v-list-item-title></v-list-item
               >
             </v-list>
@@ -54,129 +63,227 @@
         <v-dialog max-width="1000" v-model="dialogFind">
           <v-card>
             <v-card-title>
-                Schedule Search
-                <v-spacer></v-spacer>
-                <v-text-field
+              Schedule Search
+              <v-spacer></v-spacer>
+              <v-text-field
                 v-model="search"
                 append-icon="mdi-magnify"
                 label="What are you looking for?"
                 single-line
                 hide-details
-                ></v-text-field>
+              ></v-text-field>
             </v-card-title>
-            <v-data-table v-if="userProps === 'admin'" :headers="headers" :items="events" item-key="id" :search="search" :sort-by="['owner2','start']" :sort-desc="[false, true]" multi-sort class="elevation-1" :single-expand=true :expanded.sync="expanded" show-expand>
+            <v-data-table
+              v-if="userProps === 'admin'"
+              :headers="headers"
+              :items="events"
+              item-key="id"
+              :search="search"
+              :sort-by="['owner2', 'start']"
+              :sort-desc="[false, true]"
+              multi-sort
+              class="elevation-1"
+              :single-expand="true"
+              :expanded.sync="expanded"
+              show-expand
+            >
               <template v-slot:expanded-item="{ item }">
-                  <v-col auto>
-                    <h4>
-                      ****************Customer_Notes***************** 
-                    </h4>
-                    {{ item.details }}
-                  </v-col>
-                  <v-col align-self="center">
-                    <h4>
-                      *****************Techician_Notes*************** 
-                    </h4>
-                    {{ item.emp_notes }}
-                  </v-col>
-                  <v-col auto>
-                    <h4>
-                      *******************Admin_Notes***************** 
-                    </h4>
-                    {{ item.admin_notes }}
-                  </v-col>
+                <v-col auto>
+                  <h4>
+                    ****************Customer_Notes*****************
+                  </h4>
+                  {{ item.details }}
+                </v-col>
+                <v-col align-self="center">
+                  <h4>
+                    *****************Techician_Notes***************
+                  </h4>
+                  {{ item.emp_notes }}
+                </v-col>
+                <v-col auto>
+                  <h4>
+                    *******************Admin_Notes*****************
+                  </h4>
+                  {{ item.admin_notes }}
+                </v-col>
               </template>
             </v-data-table>
-            <v-data-table v-else-if="categories.includes(userProps)" :headers="headersTech" :items="events" :search="search" :sort-by="['owner2','start']" :sort-desc="[false, true]" multi-sort class="elevation-1" :single-expand=true :expanded.sync="expanded" show-expand>
+            <v-data-table
+              v-else-if="categories.includes(userProps)"
+              :headers="headersTech"
+              :items="events"
+              :search="search"
+              :sort-by="['owner2', 'start']"
+              :sort-desc="[false, true]"
+              multi-sort
+              class="elevation-1"
+              :single-expand="true"
+              :expanded.sync="expanded"
+              show-expand
+            >
               <template v-slot:expanded-item="{ item }">
-                  <v-col align-self="center">
-                    <h4>
-                      *****************Techician_Notes*************** 
-                    </h4>
-                    {{ item.emp_notes }}
-                  </v-col>
-                  <v-col auto>
-                    <h4>
-                      *******************Admin_Notes***************** 
-                    </h4>
-                    {{ item.admin_notes }}
-                  </v-col>
+                <v-col align-self="center">
+                  <h4>
+                    *****************Techician_Notes***************
+                  </h4>
+                  {{ item.emp_notes }}
+                </v-col>
+                <v-col auto>
+                  <h4>
+                    *******************Admin_Notes*****************
+                  </h4>
+                  {{ item.admin_notes }}
+                </v-col>
               </template>
             </v-data-table>
-            <v-data-table v-else-if="!categories.includes(userProps) || userProps !== 'admin'" :headers="headersCust" :items="events" :search="search" :sort-by="['owner2','start']" :sort-desc="[false, true]" multi-sort class="elevation-1" :single-expand=true :expanded.sync="expanded" show-expand>
+            <v-data-table
+              v-else-if="
+                !categories.includes(userProps) || userProps !== 'admin'
+              "
+              :headers="headersCust"
+              :items="events"
+              :search="search"
+              :sort-by="['owner2', 'start']"
+              :sort-desc="[false, true]"
+              multi-sort
+              class="elevation-1"
+              :single-expand="true"
+              :expanded.sync="expanded"
+              show-expand
+            >
               <template v-slot:expanded-item="{ item }">
-                  <v-col auto>
-                    <h4>
-                      ****************Customer_Notes***************** 
-                    </h4>
-                    {{ item.details }}
-                  </v-col>
+                <v-col auto>
+                  <h4>
+                    ****************Customer_Notes*****************
+                  </h4>
+                  {{ item.details }}
+                </v-col>
               </template>
             </v-data-table>
-        </v-card>
+          </v-card>
         </v-dialog>
         <!-- Create Event dialog -->
         <v-dialog v-model="dialog" max-width="500">
           <v-card v-bind:class="dialog_color">
             <v-container>
-              <v-alert v-if="showError" dense type="error">Required info missed or wrong date chosen *</v-alert>
-                <v-text-field v-if="userProps==='admin'"
+              <v-alert v-if="showError" dense type="error"
+                >Required info missed or wrong date chosen *</v-alert
+              >
+              <v-text-field
+                v-if="userProps === 'admin'"
+                @click="resetError"
+                v-model="start_date"
+                type="date"
+                label="Date of Service* (*=required)"
+              ></v-text-field>
+              <v-text-field
+                v-else
+                @click="resetError"
+                v-model="start_date"
+                type="date"
+                label="Date of Service* (*=required)"
+                :rules="rules"
+              ></v-text-field>
+              <v-text-field
+                v-model="apt_num"
+                label="Enter Apartment Number* (one per scheduled service)"
+                @click="resetError"
+              ></v-text-field>
+              <v-row @click="resetError">
+                <v-col cols="12" sm="2" md="2">
+                  <v-label>Time*</v-label>
+                  <v-radio-group v-model="time_of_day" column>
+                    <v-radio label="AM" color="blue" value="AM"></v-radio>
+                    <v-radio label="PM" color="blue " value="PM"></v-radio>
+                    <v-radio
+                      label="Anytime"
+                      color="blue "
+                      value="Anytime"
+                    ></v-radio>
+                  </v-radio-group>
+                </v-col>
+                <v-col cols="12" sm="4" md="4">
+                  <v-label>Type*</v-label>
+                  <v-radio-group v-model="apt_status" column>
+                    <v-radio
+                      label="Occupied"
+                      color="blue"
+                      value="Occupied"
+                    ></v-radio>
+                    <v-radio
+                      label="Vacant"
+                      color="blue "
+                      value="Vacant"
+                    ></v-radio>
+                  </v-radio-group>
+                </v-col>
+                <v-col cols="12" sm="6" md="6">
+                  <v-label>Service Category*</v-label>
+                  <v-radio-group v-model="service_category" column>
+                    <v-radio
+                      label="Carpet Cleaning"
+                      color="blue"
+                      value="Carpet"
+                    ></v-radio>
+                    <v-radio
+                      label="Housekeeping"
+                      color="blue "
+                      value="Housekeeping"
+                    ></v-radio>
+                    <v-radio
+                      label="Paint"
+                      color="blue "
+                      value="Paint"
+                    ></v-radio>
+                    <v-radio
+                      label="Other"
+                      color="blue "
+                      value="Other"
+                    ></v-radio>
+                  </v-radio-group>
+                </v-col>
+              </v-row>
+              <v-container fluid>
+                <v-row
+                  v-if="userProps === 'admin'"
+                  align="center"
                   @click="resetError"
-                  v-model="start_date"
-                  type="date"
-                  label="Date of Service* (*=required)"
-                ></v-text-field>
-                <v-text-field v-else
-                  @click="resetError"
-                  v-model="start_date"
-                  type="date"
-                  label="Date of Service* (*=required)"
-                  :rules="rules"
-                ></v-text-field>
-                <v-text-field v-model="apt_num" label="Enter Apartment Number* (one per scheduled service)" @click="resetError"></v-text-field>
-                <v-row @click="resetError">
-                  <v-col cols="12" sm="2" md="2">
-                    <v-label>Time*</v-label>
-                    <v-radio-group v-model="time_of_day" column>
-                      <v-radio label="AM" color="blue" value="AM"></v-radio>
-                      <v-radio label="PM" color="blue " value="PM"></v-radio>
-                      <v-radio label="Anytime" color="blue " value="Anytime"></v-radio>
-                    </v-radio-group>
-                  </v-col>
-                  <v-col cols="12" sm="4" md="4">
-                    <v-label>Type*</v-label>
-                    <v-radio-group v-model="apt_status" column>
-                      <v-radio label="Occupied" color="blue" value="Occupied"></v-radio>
-                      <v-radio label="Vacant" color="blue " value="Vacant"></v-radio>
-                    </v-radio-group>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-label>Service Category*</v-label>
-                    <v-radio-group v-model="service_category" column>
-                      <v-radio label="Carpet Cleaning" color="blue" value="Carpet"></v-radio>
-                      <v-radio label="Housekeeping" color="blue " value="Housekeeping"></v-radio>
-                      <v-radio label="Paint" color="blue " value="Paint"></v-radio>
-                      <v-radio label="Other" color="blue " value="Other"></v-radio>
-                    </v-radio-group>
-                  </v-col>
+                >
+                  <v-col class="d-flex" cols="12" sm="6"
+                    ><v-select
+                      v-model="owner2"
+                      :items="owners"
+                      label="Customer*"
+                      solo
+                    ></v-select
+                  ></v-col>
+                  <v-col class="d-flex" cols="12" sm="6"
+                    ><v-select
+                      v-model="category"
+                      :items="categories"
+                      label="Technician*"
+                      solo
+                    ></v-select
+                  ></v-col>
                 </v-row>
-                <v-container fluid>
-                  <v-row v-if="userProps === 'admin'" align="center" @click="resetError">
-                    <v-col class="d-flex" cols="12" sm="6"><v-select v-model="owner2" :items="owners" label="Customer*" solo></v-select></v-col>
-                    <v-col class="d-flex" cols="12" sm="6"><v-select v-model="category" :items="categories" label="Technician*" solo></v-select></v-col>
-                  </v-row>
-                </v-container>
-                <v-text-field
-                  v-model="details"
-                  type="text"
-                  label="Job Detail"
-                ></v-text-field>
-                <v-text-field v-model="created_by" type="text" label="Created By"></v-text-field>
-                <v-btn
-                  type="submit"
-                  color="primary"
-                  class="mr-4"
-                  @click.prevent="createEvent"
-                  >Create Event</v-btn>
+              </v-container>
+              <v-text-field
+                v-model="details"
+                type="text"
+                label="Job Detail"
+              ></v-text-field>
+              <v-text-field
+                v-model="created_by"
+                type="text"
+                label="Created By"
+              ></v-text-field>
+              <v-btn
+                type="submit"
+                color="primary"
+                class="mr-4"
+                @click.prevent="createEvent"
+                >Create Event</v-btn
+              >
             </v-container>
           </v-card>
         </v-dialog>
@@ -208,13 +315,19 @@
           :close-on-content-click="false"
           :activator="selectedElement"
           offset-x
-          :open-on-click="false">
+          :open-on-click="false"
+        >
           <v-card color="grey lighten-4" flat class="mb-6">
             <v-toolbar :color="selectedEvent.color" dark>
-              <v-btn v-if="userProps === 'admin'" @click.prevent="dialogDeleteConfirmation = true" icon><v-icon>mdi-delete</v-icon></v-btn>
+              <v-btn
+                v-if="userProps === 'admin'"
+                @click.prevent="dialogDeleteConfirmation = true"
+                icon
+                ><v-icon>mdi-delete</v-icon></v-btn
+              >
               <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
             </v-toolbar>
-            
+
             <v-card-text>
               <!-- View Selected Event -->
               <form v-if="currentlyEditing !== selectedEvent.id">
@@ -224,7 +337,9 @@
                 </div>
                 <p></p>
                 <!-- If user is admin show more items to be modified -->
-                <div v-if="userProps === 'admin' || categories.includes(userProps)">
+                <div
+                  v-if="userProps === 'admin' || categories.includes(userProps)"
+                >
                   <h3>Technician Notes</h3>
                   {{ selectedEvent.emp_notes }}
                   <p></p>
@@ -248,13 +363,16 @@
                   <h3>Customer Notes</h3>
                   <v-textarea
                     v-model="selectedEvent.details"
-                    auto-grow filled outlined
-                    label="add note" 
+                    auto-grow
+                    filled
+                    outlined
+                    label="add note"
                   ></v-textarea>
                 </div>
                 <div v-else-if="userProps === 'admin'">
                   <h3>Customer Notes</h3>
-                  {{ selectedEvent.details }}</div>
+                  {{ selectedEvent.details }}
+                </div>
                 <p></p>
                 <div
                   v-if="userProps === 'admin' || categories.includes(userProps)"
@@ -275,130 +393,251 @@
                   <div v-if="userProps === 'admin'">
                     <v-textarea
                       v-model="selectedEvent.admin_notes"
-                      auto-grow filled outlined
+                      auto-grow
+                      filled
+                      outlined
                       label="add note"
                     ></v-textarea>
                   </div>
                   <div v-else>{{ selectedEvent.admin_notes }}</div>
                   <!-- DropDown for list of techs -->
-                  <div v-if="userProps === 'admin' && selectedEvent.note_code !== 'COMP'">
+                  <div
+                    v-if="
+                      userProps === 'admin' &&
+                        selectedEvent.note_code !== 'COMP'
+                    "
+                  >
                     <h3>Technician Name</h3>
                     <v-container fluid>
                       <v-col class="d-flex" cols="12" sm="6">
-                        <v-select v-model="selectedEvent.category" :items="categories" label="Technician" dense solo></v-select>
+                        <v-select
+                          v-model="selectedEvent.category"
+                          :items="categories"
+                          label="Technician"
+                          dense
+                          solo
+                        ></v-select>
                       </v-col>
                     </v-container>
                   </div>
                   <p></p>
                   <div v-if="selectedEvent.note_code === 'COMP'">
                     <h3>Technician Name</h3>
-                    {{ selectedEvent.category}}
+                    {{ selectedEvent.category }}
                   </div>
                 </div>
               </form>
             </v-card-text>
             <v-card-actions>
               <v-btn text color="secondary" @click="closeEvent">Close</v-btn>
-              <div v-if="selectedEvent.note_code === 'CANC'">
-
-              </div>
+              <div v-if="selectedEvent.note_code === 'CANC'"></div>
               <div v-else-if="currentlyEditing !== selectedEvent.id">
-                <v-btn text @click.prevent="editEvent(selectedEvent)" >Edit</v-btn>
+                <v-btn text @click.prevent="editEvent(selectedEvent)"
+                  >Edit</v-btn
+                >
               </div>
-              <v-btn text v-else @click.prevent="updateEvent(selectedEvent)">Save</v-btn>
-              <v-btn text
-                v-if="!categories.includes(userProps) && userProps !== 'admin' && selectedEvent.note_code !== 'CANC' && selectedEvent.note_code !== 'COMP' && selectedEvent.note_code !== 'INV'"
-                @click.prevent="dialogCancelConfirmation = true">Cancel Job</v-btn>
+              <v-btn text v-else @click.prevent="updateEvent(selectedEvent)"
+                >Save</v-btn
+              >
               <v-btn
                 text
-                v-if="(categories.includes(userProps) && selectedEvent.color === 'orange') || (userProps === 'admin' && selectedEvent.color === 'orange')"
+                v-if="
+                  !categories.includes(userProps) &&
+                    userProps !== 'admin' &&
+                    selectedEvent.note_code !== 'CANC' &&
+                    selectedEvent.note_code !== 'COMP' &&
+                    selectedEvent.note_code !== 'INV'
+                "
+                @click.prevent="dialogCancelConfirmation = true"
+                >Cancel Job</v-btn
+              >
+              <v-btn
+                text
+                v-if="
+                  (categories.includes(userProps) &&
+                    selectedEvent.color === 'orange') ||
+                    (userProps === 'admin' && selectedEvent.color === 'orange')
+                "
                 @click.prevent="ackEvent(selectedEvent)"
                 >Acknowledge</v-btn
               >
               <v-spacer></v-spacer>
-              <v-btn text v-if="selectedEvent.color === 'black' && categories.includes(userProps)" @click="dialogCompleteConfirmation = true">Done</v-btn>
-              <v-btn text v-if="selectedEvent.color === 'blue' && userProps === 'admin'" @click="dialogInvoiceConfirmation = true">Invoice</v-btn>
+              <v-btn
+                text
+                v-if="
+                  selectedEvent.color === 'black' &&
+                    categories.includes(userProps)
+                "
+                @click="dialogCompleteConfirmation = true"
+                >Done</v-btn
+              >
+              <v-btn
+                text
+                v-if="selectedEvent.color === 'blue' && userProps === 'admin'"
+                @click="dialogInvoiceConfirmation = true"
+                >Invoice</v-btn
+              >
             </v-card-actions>
           </v-card>
           <!-- Delete Confirmation -->
           <v-row justify="center">
-            <v-dialog v-model="dialogDeleteConfirmation" persistent max-width="290">
+            <v-dialog
+              v-model="dialogDeleteConfirmation"
+              persistent
+              max-width="290"
+            >
               <v-card>
-                <v-card-title class="error headline" style="font-weight:bold; color:white;">Confirm Delete</v-card-title>
-                <v-card-text>Are you sure you want to delete? This cannot be undone.</v-card-text>
+                <v-card-title
+                  class="error headline"
+                  style="font-weight:bold; color:white;"
+                  >Confirm Delete</v-card-title
+                >
+                <v-card-text
+                  >Are you sure you want to delete? This cannot be
+                  undone.</v-card-text
+                >
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn text @click="dialogDeleteConfirmation = false">Close</v-btn>
-                  <v-btn color="error" text @click="deleteEvent(selectedEvent)">Confirm Delete</v-btn>
+                  <v-btn text @click="dialogDeleteConfirmation = false"
+                    >Close</v-btn
+                  >
+                  <v-btn color="error" text @click="deleteEvent(selectedEvent)"
+                    >Confirm Delete</v-btn
+                  >
                 </v-card-actions>
               </v-card>
             </v-dialog>
           </v-row>
           <!-- Cancel Confirmation -->
           <v-row justify="center">
-            <v-dialog v-model="dialogCancelConfirmation" persistent max-width="290">
+            <v-dialog
+              v-model="dialogCancelConfirmation"
+              persistent
+              max-width="290"
+            >
               <v-card>
-                <v-card-title class="black headline" style="font-weight:bold; color:white;">Confirm Cancel</v-card-title>
-                <v-card-text>Are you sure you want to cancel? This cannot be undone. You will have to resubmit if you feel you still need it afterwards.</v-card-text>
+                <v-card-title
+                  class="black headline"
+                  style="font-weight:bold; color:white;"
+                  >Confirm Cancel</v-card-title
+                >
+                <v-card-text
+                  >Are you sure you want to cancel? This cannot be undone. You
+                  will have to resubmit if you feel you still need it
+                  afterwards.</v-card-text
+                >
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn text @click="dialogCancelConfirmation = false">Close</v-btn>
-                  <v-btn color="error" text @click="cancelEvent(selectedEvent)">Confirm Cancel</v-btn>
+                  <v-btn text @click="dialogCancelConfirmation = false"
+                    >Close</v-btn
+                  >
+                  <v-btn color="error" text @click="cancelEvent(selectedEvent)"
+                    >Confirm Cancel</v-btn
+                  >
                 </v-card-actions>
               </v-card>
             </v-dialog>
           </v-row>
           <!-- Complete Confirmation -->
           <v-row justify="center">
-            <v-dialog v-model="dialogCompleteConfirmation" persistent max-width="290">
+            <v-dialog
+              v-model="dialogCompleteConfirmation"
+              persistent
+              max-width="290"
+            >
               <v-card>
-                <v-card-title class="blue headline" style="font-weight:bold; color:white;">Confirm Complete</v-card-title>
-                <v-card-text>Are you sure you want to set status to complete? This cannot be undone.</v-card-text>
+                <v-card-title
+                  class="blue headline"
+                  style="font-weight:bold; color:white;"
+                  >Confirm Complete</v-card-title
+                >
+                <v-card-text
+                  >Are you sure you want to set status to complete? This cannot
+                  be undone.</v-card-text
+                >
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn text @click="dialogCompleteConfirmation = false">Close</v-btn>
-                  <v-btn color="blue" text @click="completeEvent(selectedEvent)">Confirm Complete</v-btn>
+                  <v-btn text @click="dialogCompleteConfirmation = false"
+                    >Close</v-btn
+                  >
+                  <v-btn color="blue" text @click="completeEvent(selectedEvent)"
+                    >Confirm Complete</v-btn
+                  >
                 </v-card-actions>
               </v-card>
             </v-dialog>
           </v-row>
           <!-- Invoice Confirmation -->
           <v-row justify="center">
-            <v-dialog v-model="dialogInvoiceConfirmation" persistent max-width="290">
+            <v-dialog
+              v-model="dialogInvoiceConfirmation"
+              persistent
+              max-width="290"
+            >
               <v-card>
-                <v-card-title class="green headline" style="font-weight:bold; color:white;">Confirm Invoice</v-card-title>
-                <v-card-text>Are you sure you want to set status to invoice? This cannot be undone.</v-card-text>
+                <v-card-title
+                  class="green headline"
+                  style="font-weight:bold; color:white;"
+                  >Confirm Invoice</v-card-title
+                >
+                <v-card-text
+                  >Are you sure you want to set status to invoice? This cannot
+                  be undone.</v-card-text
+                >
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn text @click="dialogInvoiceConfirmation = false">Close</v-btn>
-                  <v-btn color="green" text @click="invoiceEvent(selectedEvent)">Confirm Invoice</v-btn>
+                  <v-btn text @click="dialogInvoiceConfirmation = false"
+                    >Close</v-btn
+                  >
+                  <v-btn color="green" text @click="invoiceEvent(selectedEvent)"
+                    >Confirm Invoice</v-btn
+                  >
                 </v-card-actions>
               </v-card>
             </v-dialog>
           </v-row>
         </v-menu>
       </v-sheet>
-        <!-- Alert if there's new job -->
-        <v-dialog v-if="userProps === 'admin'" v-model="newJobAlert" persistent max-width="290">
-          <v-card>
-            <v-card-title class="red headline" style="font-weight:bold; color:white;">New Jobs Alert!</v-card-title>
-            <v-card-text>Please assign technicians to new jobs</v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn text @click="newJobAlert = false">Close</v-btn>
-              <!-- <v-btn color="red" text @click="playSound()">Assign Tech</v-btn> -->
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+      <!-- Alert if there's new job -->
+      <v-dialog
+        v-if="userProps === 'admin'"
+        v-model="newJobAlert"
+        persistent
+        max-width="290"
+      >
+        <v-card>
+          <v-card-title
+            class="red headline"
+            style="font-weight:bold; color:white;"
+            >New Jobs Alert!</v-card-title
+          >
+          <v-card-text>Please assign technicians to new jobs</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text @click="newJobAlert = false">Close</v-btn>
+            <!-- <v-btn color="red" text @click="playSound()">Assign Tech</v-btn> -->
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import { useSound } from '@vueuse/sound'
-import buttonSfx from '../assets/audio.mp3'
+import { useSound } from "@vueuse/sound";
+import buttonSfx from "../assets/audio.mp3";
 import { listCalEvents } from "@/graphql/queries";
-import { newOnCreateCalEvent, newOnUpdateCalEvent, newOnDeleteCalEvent, techOnDeleteCalEvent, techOnUpdateCalEvent, techOnCreateCalEvent, custOnCreateCalEvent, custOnUpdateCalEvent, custOnDeleteCalEvent } from "@/graphql/subscriptions"
+import {
+  newOnCreateCalEvent,
+  newOnUpdateCalEvent,
+  newOnDeleteCalEvent,
+  techOnDeleteCalEvent,
+  techOnUpdateCalEvent,
+  techOnCreateCalEvent,
+  custOnCreateCalEvent,
+  custOnUpdateCalEvent,
+  custOnDeleteCalEvent,
+} from "@/graphql/subscriptions";
 import { API, graphqlOperation } from "aws-amplify";
 import {
   createCalEvent,
@@ -417,8 +656,11 @@ export default {
       "4day": "4 Days",
       category: "Employee",
     },
-  rules: [
-      v => (new Date().setHours(0,0,0,0)) <= (new Date(v.replace(/-/g, '/')).setHours(0,0,0,0)) || 'Date must be today or newer'
+    rules: [
+      (v) =>
+        new Date().setHours(0, 0, 0, 0) <=
+          new Date(v.replace(/-/g, "/")).setHours(0, 0, 0, 0) ||
+        "Date must be today or newer",
     ],
     // corners_complex: ['east', 'west'],
     created_by: "",
@@ -456,44 +698,107 @@ export default {
     dialog: false,
     names: [],
     colors: [],
-    time_of_days: ["AM","PM"],
-    apt_statuss: ["Occupied","Vacant"],
-    service_categories: ["Carpet","Housekeeping","Paint","Other"],
+    time_of_days: ["AM", "PM"],
+    apt_statuss: ["Occupied", "Vacant"],
+    service_categories: ["Carpet", "Housekeeping", "Paint", "Other"],
     category: null,
-    categories: ["agapito","cesar","conrrado","eduardo","hugo","jose","karen","leo","maria","martin","pablo","resurface","vero","victor","technician1","technician2"],      
+    categories: [
+      "agapito",
+      "cesar",
+      "conrrado",
+      "eduardo",
+      "hugo",
+      "jose", 
+      "karen",
+      "leo",
+      "maria",
+      "martin",
+      "pablo",
+      "resurface",
+      "vero",
+      "victor",
+      "technician1",
+      "technician2",
+    ],
     selectedEmp: [],
     newJobAlert: false,
     owner2: null,
-    owners: ["amp","apex","arioso","arlington","ash","aura","bnf","cedar","chase","circuit-side","cliffs","corners","corners-east","current-side","dakota","drey","durham","elan","gate","gateway","hill","holston","huntington","interurban","kace","lakes","live-oaks","loftrow","lucas","magnmay","meadow","montage-southside","northbridge","park","radius","riviera","stonebriar","teak","tealwood","truman","uppereastside","verandas","westside","customer1","customer2"],    
+    owners: [
+      "amp",
+      "apex",
+      "arioso",
+      "arlington",
+      "ash",
+      "aura",
+      "bnf",
+      "cedar",
+      "chase",
+      "circuit-side",
+      "cliffs",
+      "corners",
+      "corners-east",
+      "current-side",
+      "dakota",
+      "drey",
+      "durham",
+      "elan",
+      "gate",
+      "gateway",
+      "hill",
+      "holston",
+      "huntington",
+      "interurban",
+      "kace",
+      "lakes",
+      "live-oaks",
+      "loftrow",
+      "lucas",
+      "magnmay",
+      "meadow",
+      "montage-southside",
+      "northbridge",
+      "park",
+      "radius",
+      "riviera",
+      "stonebriar",
+      "teak",
+      "tealwood",
+      "truman",
+      "uppereastside",
+      "verandas",
+      "westside",
+      "customer1",
+      "customer2",
+    ],
     note_code: null,
-    search: '',
+    search: "",
     headers: [
-      { text: 'Date', align: 'start', value: 'start',},
-      { text: 'Customer', value: 'owner2' },
-      { text: 'Technician', value: 'category' },
-      { text: 'Apt No.', value: 'apt_num' },
-      { text: 'Color', value: 'color' },
-      { text: 'Time of Day', value: 'time_of_day' },
-      { text: 'Service', value: 'service_category' },
-      { text: 'Status', value: 'apt_status' },
-      { text: '', value: 'data-table-expand' },
+      { text: "Date", align: "start", value: "start" },
+      { text: "Customer", value: "owner2" },
+      { text: "Technician", value: "category" },
+      { text: "Apt No.", value: "apt_num" },
+      { text: "Color", value: "color" },
+      { text: "Time of Day", value: "time_of_day" },
+      { text: "Service", value: "service_category" },
+      { text: "Status", value: "apt_status" },
+      { text: "", value: "data-table-expand" },
     ],
     headersTech: [
-      { text: 'Date', align: 'start', value: 'start',},
-      { text: 'Customer', value: 'owner2' },
-      { text: 'Apt No.', value: 'apt_num' },
-      { text: 'Time of Day', value: 'time_of_day' },
-      { text: 'Service', value: 'service_category' },
-      { text: 'Status', value: 'apt_status' },
-      { text: '', value: 'data-table-expand' },
+      { text: "Date", align: "start", value: "start" },
+      { text: "Customer", value: "owner2" },
+      { text: "Apt No.", value: "apt_num" },
+      { text: "Time of Day", value: "time_of_day" },
+      { text: "Service", value: "service_category" },
+      { text: "Status", value: "apt_status" },
+      { text: "", value: "data-table-expand" },
     ],
     headersCust: [
-      { text: 'Date', align: 'start', value: 'start',},
-      { text: 'Apt No.', value: 'apt_num' },
-      { text: 'Time of Day', value: 'time_of_day' },
-      { text: 'Service', value: 'service_category' },
-      { text: 'Status', value: 'apt_status' },
-      { text: '', value: 'data-table-expand' },
+      { text: "Date", align: "start", value: "start" },
+      { text: "Apt No.", value: "apt_num" },
+      { text: "Time of Day", value: "time_of_day" },
+      { text: "Service", value: "service_category" },
+      { text: "Status", value: "apt_status" },
+      { text: "", value: "data-table-expand" },
     ],
     invalidDate: false,
     setNextToken: undefined,
@@ -503,55 +808,55 @@ export default {
     dialogCompleteConfirmation: false,
     dialogInvoiceConfirmation: false,
     singleExpand: false,
-    expanded:[]
+    expanded: [],
   }),
   setup() {
-    const { play } = useSound(buttonSfx)
+    const { play } = useSound(buttonSfx);
     return {
-      play
-    }
+      play,
+    };
   },
-  computed:{
-    playSound(){
-      return this.play
-    }
+  computed: {
+    playSound() {
+      return this.play;
+    },
   },
-  created(){
-    this.subscribeCal()
+  created() {
+    this.subscribeCal();
   },
   mounted() {
     this.$refs.calendar.checkChange();
     this.getCalEvents();
-    if (this.categories.indexOf(this.userProps) >= 0){
-      this.type='day'
-    } 
+    if (this.categories.indexOf(this.userProps) >= 0) {
+      this.type = "day";
+    }
     //   else if (this.userProps === 'admin'){
     //     this.type='month'
-    // } 
+    // }
   },
   methods: {
-    async subscribeCal(){
+    async subscribeCal() {
       // EH1
       // If admin
-      const that = this
-      if (this.userProps === 'admin'){
-        API.graphql({ query: newOnCreateCalEvent })
-        .subscribe({
+      const that = this;
+      if (this.userProps === "admin") {
+        API.graphql({ query: newOnCreateCalEvent }).subscribe({
           next: (eventData) => {
-            that.events.push(eventData.value.data.newOnCreateCalEvent) 
-            if(this.copyDelete==='off'){
+            that.events.push(eventData.value.data.newOnCreateCalEvent);
+            if (this.copyDelete === "off") {
               // do nothing
-              console.log("**** do nothing")
+              console.log("**** do nothing");
             } else {
-                this.playSound()
-                this.newJobAlert = true;   
-                console.log("**** alert ")
+              this.playSound();
+              this.newJobAlert = true;
+              console.log("**** alert ");
             }
             // Fix this to refresh only newly created data and rest of other subcriptions
-            this.getCalEvents()
-            console.log("subs on create")
-            this.copyDelete='on'
-          }, error: error => console.warn(error)
+            this.getCalEvents();
+            console.log("subs on create");
+            this.copyDelete = "on";
+          },
+          error: (error) => console.warn(error),
         });
 
         // API.graphql({ query: newOnCreateCalEvent })
@@ -566,13 +871,12 @@ export default {
 
         //   }, error: error => console.warn(error)
         // });
-        API.graphql({ query: newOnUpdateCalEvent })
-        .subscribe({
+        API.graphql({ query: newOnUpdateCalEvent }).subscribe({
           next: (eventUpdateData) => {
-            that.events.push(eventUpdateData.value.data.newOnUpdateCalEvent)
+            that.events.push(eventUpdateData.value.data.newOnUpdateCalEvent);
             // const ev=eventUpdateData.value.data.newOnUpdateCalEvent
             // this.selectedEvent.name=ev.time_of_day + " - " + ev.owner2 + " - " + ev.service_category + " - " + ev.apt_num + " - " + " - " + ev.apt_status + " - " + ev.category
-            this.getCalEvents()
+            this.getCalEvents();
             // console.log("sub newOnUpdateData")
             // console.log("-----------")
             // console.log("==== Color ====")
@@ -583,102 +887,122 @@ export default {
             // this.selectedEvent.details=ev.details
             // this.selectedEvent.emp_notes=ev.emp_notes
             // this.selectedEvent.admin_notes=ev.admin_notes
-          }, error: error => console.warn(error)
+          },
+          error: (error) => console.warn(error),
         });
-        API.graphql({ query: newOnDeleteCalEvent })
-        .subscribe({
+        API.graphql({ query: newOnDeleteCalEvent }).subscribe({
           next: (eventDeleteData) => {
-            that.events.push(eventDeleteData.value.data.newOnDeleteCalEvent)      
-            this.getCalEvents()
-          }, error: error => console.warn(error)
+            that.events.push(eventDeleteData.value.data.newOnDeleteCalEvent);
+            this.getCalEvents();
+          },
+          error: (error) => console.warn(error),
         });
       } else {
         // technician subs
         API.graphql(
           graphqlOperation(techOnCreateCalEvent, {
-          category: this.userProps
-         }))
-        .subscribe({
+            category: this.userProps,
+          })
+        ).subscribe({
           next: (eventTechCreateData) => {
-            that.events.push(eventTechCreateData.value.data.techOnCreateCalEvent)      
-            this.getCalEvents()
-          }, error: error => console.warn(error)
+            that.events.push(
+              eventTechCreateData.value.data.techOnCreateCalEvent
+            );
+            this.getCalEvents();
+          },
+          error: (error) => console.warn(error),
         });
-        
+
         API.graphql(
           graphqlOperation(techOnUpdateCalEvent, {
-          category: this.userProps
-         }))
-        .subscribe({
+            category: this.userProps,
+          })
+        ).subscribe({
           next: (eventTechUpdateData) => {
-            that.events.push(eventTechUpdateData.value.data.techOnUpdateCalEvent)   
-            const ev=eventTechUpdateData.value.data.techOnUpdateCalEvent
+            that.events.push(
+              eventTechUpdateData.value.data.techOnUpdateCalEvent
+            );
+            const ev = eventTechUpdateData.value.data.techOnUpdateCalEvent;
             // if (ev.color === 'brown'){
             //   this.selectedEvent.color='orange'
-            // } 
+            // }
             // else if (ev.color==='black'){
             //   this.selectedEvent.color='black'
             // }
             // this.selectedEvent.name=this.name
 
-            // when technician is having funky colors from a previous issue     
+            // when technician is having funky colors from a previous issue
             // this.color=this.selectedEvent.color
 
-
-            console.log("sub eventTechUpdateData")
-            console.log("-----------")
-            console.log("==== Color ====")
-            console.log("this.color - " + this.color)
-            console.log("this.selectedEvent.color - " + this.selectedEvent.color)
-            console.log("subs.color - " + ev.color)
-            this.getCalEvents()
-          }, error: error => console.warn(error)
+            console.log("sub eventTechUpdateData");
+            console.log("-----------");
+            console.log("==== Color ====");
+            console.log("this.color - " + this.color);
+            console.log(
+              "this.selectedEvent.color - " + this.selectedEvent.color
+            );
+            console.log("subs.color - " + ev.color);
+            this.getCalEvents();
+          },
+          error: (error) => console.warn(error),
         });
         API.graphql(
           graphqlOperation(techOnDeleteCalEvent, {
-          category: this.userProps
-         }))
-        .subscribe({
+            category: this.userProps,
+          })
+        ).subscribe({
           next: (eventTechDeleteData) => {
-            that.events.push(eventTechDeleteData.value.data.techOnDeleteCalEvent)      
-            this.getCalEvents()
-            console.log("Delete from Tech")
-          }, error: error => console.warn(error)
+            that.events.push(
+              eventTechDeleteData.value.data.techOnDeleteCalEvent
+            );
+            this.getCalEvents();
+            console.log("Delete from Tech");
+          },
+          error: (error) => console.warn(error),
         });
         // customer subs
         API.graphql(
           graphqlOperation(custOnCreateCalEvent, {
-          owner2: this.userProps
-         }))
-        .subscribe({
+            owner2: this.userProps,
+          })
+        ).subscribe({
           next: (eventCustCreateData) => {
-            that.events.push(eventCustCreateData.value.data.custOnCreateCalEvent)      
-            this.getCalEvents()
-          }, error: error => console.warn(error)
+            that.events.push(
+              eventCustCreateData.value.data.custOnCreateCalEvent
+            );
+            this.getCalEvents();
+          },
+          error: (error) => console.warn(error),
         });
         API.graphql(
           graphqlOperation(custOnUpdateCalEvent, {
-          owner2: this.userProps
-         }))
-        .subscribe({
+            owner2: this.userProps,
+          })
+        ).subscribe({
           next: (eventCustUpdateData) => {
-            that.events.push(eventCustUpdateData.value.data.custOnUpdateCalEvent)
+            that.events.push(
+              eventCustUpdateData.value.data.custOnUpdateCalEvent
+            );
             // this.selectedEvent=eventCustUpdateData.value.data.custOnUpdateCalEvent
-            // this.selectedEvent.name=this.name 
-            // this.selectedEvent.color=this.color     
-            this.getCalEvents()
-          }, error: error => console.warn(error)
+            // this.selectedEvent.name=this.name
+            // this.selectedEvent.color=this.color
+            this.getCalEvents();
+          },
+          error: (error) => console.warn(error),
         });
         API.graphql(
           graphqlOperation(custOnDeleteCalEvent, {
-          owner2: this.userProps
-         }))
-        .subscribe({
+            owner2: this.userProps,
+          })
+        ).subscribe({
           next: (eventCustDeleteData) => {
-            that.events.push(eventCustDeleteData.value.data.custOnDeleteCalEvent)      
-            this.getCalEvents()
-            console.log("Deleted from Customer")
-          }, error: error => console.warn(error)
+            that.events.push(
+              eventCustDeleteData.value.data.custOnDeleteCalEvent
+            );
+            this.getCalEvents();
+            console.log("Deleted from Customer");
+          },
+          error: (error) => console.warn(error),
         });
       }
     },
@@ -689,59 +1013,142 @@ export default {
         // calendar 1 is the retrieval of the first 1000 fetches; calendar 2 is the second 1000 fetches... and so on
         // When "Start Preparing for calendar4" is seen in console log, must do something to avoid having data to disappear
 
-        let filter = {category: {eq: this.userProps}};
-        const calendar1 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
-        this.setNextToken = calendar1.data.listCalEvents.nextToken
-        const setCalendar1 = calendar1.data.listCalEvents.items
-        this.calendars = setCalendar1
+        let filter = { category: { eq: this.userProps } };
+        const calendar1 = await API.graphql({
+          query: listCalEvents,
+          variables: { limit: 1000, filter: filter },
+        });
+        this.setNextToken = calendar1.data.listCalEvents.nextToken;
+        const setCalendar1 = calendar1.data.listCalEvents.items;
+        this.calendars = setCalendar1;
 
         //calendar 2
-        if(this.setNextToken !== null){
-          const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
-          const setCalendar2 = calendar2.data.listCalEvents.items
-          this.setNextToken = calendar2.data.listCalEvents.nextToken
-          console.log("Tech - Start Preparing for calendar3")
-          this.calendars = setCalendar1.concat(setCalendar2)
+        if (this.setNextToken !== null) {
+          const calendar2 = await API.graphql({
+            query: listCalEvents,
+            variables: {
+              limit: 1000,
+              filter: filter,
+              nextToken: this.setNextToken,
+            },
+          });
+          const setCalendar2 = calendar2.data.listCalEvents.items;
+          this.setNextToken = calendar2.data.listCalEvents.nextToken;
+          console.log("Tech - Start Preparing for calendar3");
+          this.calendars = setCalendar1.concat(setCalendar2);
         } else {
-          console.log("Tech - Not using calendar 2 yet")
+          console.log("Tech - Not using calendar 2 yet");
         }
 
         // calendar 3
-        if(this.setNextToken !== null){
-          const calendar3 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
-          const setCalendar3 = calendar3.data.listCalEvents.items
-          this.setNextToken = calendar3.data.listCalEvents.nextToken
-          console.log("Tech - Start Preparing for calendar4")
-          this.calendars = this.calendars.concat(setCalendar3)
+        if (this.setNextToken !== null) {
+          const calendar3 = await API.graphql({
+            query: listCalEvents,
+            variables: {
+              limit: 1000,
+              filter: filter,
+              nextToken: this.setNextToken,
+            },
+          });
+          const setCalendar3 = (calendar3.data.listCalEvents.this.setNextToken =
+            calendar3.data.listCalEvents.nextToken);
+          console.log("Tech - Start Preparing for calendar4");
+          this.calendars = this.calendars.concat(setCalendar3);
         } else {
-          console.log("Tech - Not using calendar 3 yet")
+          console.log("Tech - Not using calendar 3 yet");
         }
-        const eventsorig = this.calendars
-        let events = []
-        let ce = eventsorig
-        ce.forEach(doc => {
-          if (doc.note_code === 'NBA'){
-            this.color = 'orange'
-            this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-          } else if (doc.note_code === 'NBT'){
-              this.color = 'brown'
-              this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-              this.selectedEvent.color = this.color
-          } else if (doc.note_code === 'NBC'){
-              this.color = 'black'
-              this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-          } else if (doc.note_code === 'CANC'){
-              this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-              this.color = doc.color
-          } else if (doc.note_code === 'INV'){
-              this.name = "INV - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-              this.color = doc.color
-          } else if (doc.note_code === 'COMP'){
-              this.name = "DONE - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-              this.color = doc.color
+        const eventsorig = this.calendars;
+        let events = [];
+        let ce = eventsorig;
+        ce.forEach((doc) => {
+          if (doc.note_code === "NBA") {
+            this.color = "orange";
+            this.name =
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+          } else if (doc.note_code === "NBT") {
+            this.color = "brown";
+            this.name =
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.selectedEvent.color = this.color;
+          } else if (doc.note_code === "NBC") {
+            this.color = "black";
+            this.name =
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+          } else if (doc.note_code === "CANC") {
+            this.name =
+              "CANCELLED - " +
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.color = doc.color;
+          } else if (doc.note_code === "INV") {
+            this.name =
+              "INV - " +
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.color = doc.color;
+          } else if (doc.note_code === "COMP") {
+            this.name =
+              "DONE - " +
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.color = doc.color;
           } else {
-            this.name = doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-            this.color = doc.color
+            this.name =
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.color = doc.color;
           }
           events.push({
             id: doc.id,
@@ -759,61 +1166,120 @@ export default {
             apt_num: doc.apt_num,
             apt_status: doc.apt_status,
             service_category: doc.service_category,
-            created_by: doc.created_by
-          })
-        })
-        this.events = events.sort((a,b) => a.name.localeCompare(b.name))
+            created_by: doc.created_by,
+          });
+        });
+        this.events = events.sort((a, b) => a.name.localeCompare(b.name));
 
-      // if user is admin
-      } else if (this.userProps === 'admin'){
+        // if user is admin
+      } else if (this.userProps === "admin") {
         // Using the below for now but should move to the new PartiSQL of AWS DynamoDB
         // calendar 1 is the retrieval of the first 1000 fetches; calendar 2 is the second 1000 fetches... and so on
         // When "Start Preparing for calendar4" is seen in console log, must do something to avoid having data to disappear
 
-        const calendar1 = await API.graphql({ query: listCalEvents, variables: { limit: 1000 }});
-        this.setNextToken = calendar1.data.listCalEvents.nextToken
-        const setCalendar1 = calendar1.data.listCalEvents.items
-        this.calendars = setCalendar1
+        const calendar1 = await API.graphql({
+          query: listCalEvents,
+          variables: { limit: 1000 },
+        });
+        this.setNextToken = calendar1.data.listCalEvents.nextToken;
+        const setCalendar1 = calendar1.data.listCalEvents.items;
+        this.calendars = setCalendar1;
 
         // calendar 2
-        if(this.setNextToken !== null){
-          const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, nextToken: this.setNextToken }});
-          const setCalendar2 = calendar2.data.listCalEvents.items
-          this.setNextToken = calendar2.data.listCalEvents.nextToken
-          console.log("Start Preparing for calendar3")
-          this.calendars = setCalendar1.concat(setCalendar2)
+        if (this.setNextToken !== null) {
+          const calendar2 = await API.graphql({
+            query: listCalEvents,
+            variables: { limit: 1000, nextToken: this.setNextToken },
+          });
+          const setCalendar2 = calendar2.data.listCalEvents.items;
+          this.setNextToken = calendar2.data.listCalEvents.nextToken;
+          console.log("Start Preparing for calendar3");
+          this.calendars = setCalendar1.concat(setCalendar2);
         } else {
-          console.log("Not using calendar 2 yet")
+          console.log("Not using calendar 2 yet");
         }
 
         // calendar 3
-        if(this.setNextToken !== null){
-          const calendar3 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, nextToken: this.setNextToken }});
-          const setCalendar3 = calendar3.data.listCalEvents.items
-          this.setNextToken = calendar3.data.listCalEvents.nextToken
-          console.log("Start Preparing for calendar4")
-          this.calendars = this.calendars.concat(setCalendar3)
+        if (this.setNextToken !== null) {
+          const calendar3 = await API.graphql({
+            query: listCalEvents,
+            variables: { limit: 1000, nextToken: this.setNextToken },
+          });
+          const setCalendar3 = calendar3.data.listCalEvents.items;
+          this.setNextToken = calendar3.data.listCalEvents.nextToken;
+          console.log("Start Preparing for calendar4");
+          this.calendars = this.calendars.concat(setCalendar3);
         } else {
-          console.log("Not using calendar 3 yet")
+          console.log("Not using calendar 3 yet");
         }
 
         const eventsorig = this.calendars;
-        let events = []
-        let ce = eventsorig
-        ce.forEach(doc => {
-          if (doc.note_code === 'CANC'){
-              this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-              this.color = doc.color
-          } else if (doc.note_code === 'INV'){
-              this.name = "INV - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-              this.color = doc.color
-          } else if (doc.note_code === 'COMP'){
-              this.name = "DONE - " + doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-              this.color = doc.color
-          } else if(doc.category === null){
-              this.name=doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
+        let events = [];
+        let ce = eventsorig;
+        ce.forEach((doc) => {
+          if (doc.note_code === "CANC") {
+            this.name =
+              "CANCELLED - " +
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.color = doc.color;
+          } else if (doc.note_code === "INV") {
+            this.name =
+              "INV - " +
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.color = doc.color;
+          } else if (doc.note_code === "COMP") {
+            this.name =
+              "DONE - " +
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.color = doc.color;
+          } else if (doc.category === null) {
+            this.name =
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
           } else {
-            this.name=doc.time_of_day + " - " + doc.owner2 + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status + " - " + doc.category
+            this.name =
+              doc.time_of_day +
+              " - " +
+              doc.owner2 +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status +
+              " - " +
+              doc.category;
           }
           events.push({
             id: doc.id,
@@ -831,62 +1297,110 @@ export default {
             apt_num: doc.apt_num,
             apt_status: doc.apt_status,
             service_category: doc.service_category,
-            created_by: doc.created_by
-          })
-        })
-        this.events = events.sort((a,b) => a.name.localeCompare(b.name))
-      // if customer
+            created_by: doc.created_by,
+          });
+        });
+        this.events = events.sort((a, b) => a.name.localeCompare(b.name));
+        // if customer
       } else {
-        let filter = {owner2: {eq: this.userProps}};
+        let filter = { owner2: { eq: this.userProps } };
         // Using the below for now but should move to the new PartiSQL of AWS DynamoDB
         // calendar 1 is the retrieval of the first 1000 fetches; calendar 2 is the second 1000 fetches... and so on
         // When "Start Preparing for calendar4" is seen in console log, must do something to avoid having data to disappear
 
-        const calendar1 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter }});
-        this.setNextToken = calendar1.data.listCalEvents.nextToken
-        const setCalendar1 = calendar1.data.listCalEvents.items
-        this.calendars = setCalendar1
+        const calendar1 = await API.graphql({
+          query: listCalEvents,
+          variables: { limit: 1000, filter: filter },
+        });
+        this.setNextToken = calendar1.data.listCalEvents.nextToken;
+        const setCalendar1 = calendar1.data.listCalEvents.items;
+        this.calendars = setCalendar1;
 
         //calendar 2
-        if(this.setNextToken !== null){
-          const calendar2 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
-          const setCalendar2 = calendar2.data.listCalEvents.items
-          this.setNextToken = calendar2.data.listCalEvents.nextToken
-          console.log("Cust - Start Preparing for calendar3")
-          this.calendars = setCalendar1.concat(setCalendar2)
+        if (this.setNextToken !== null) {
+          const calendar2 = await API.graphql({
+            query: listCalEvents,
+            variables: {
+              limit: 1000,
+              filter: filter,
+              nextToken: this.setNextToken,
+            },
+          });
+          const setCalendar2 = calendar2.data.listCalEvents.items;
+          this.setNextToken = calendar2.data.listCalEvents.nextToken;
+          console.log("Cust - Start Preparing for calendar3");
+          this.calendars = setCalendar1.concat(setCalendar2);
         } else {
-          console.log("Cust - Not using calendar 2 yet")
+          console.log("Cust - Not using calendar 2 yet");
         }
 
         // calendar 3
-        if(this.setNextToken !== null){
-          const calendar3 = await API.graphql({ query: listCalEvents, variables: { limit: 1000, filter: filter, nextToken: this.setNextToken }});
-          const setCalendar3 = calendar3.data.listCalEvents.items
-          this.setNextToken = calendar3.data.listCalEvents.nextToken
-          console.log("Cust - Start Preparing for calendar4")
-          this.calendars = this.calendars.concat(setCalendar3)
+        if (this.setNextToken !== null) {
+          const calendar3 = await API.graphql({
+            query: listCalEvents,
+            variables: {
+              limit: 1000,
+              filter: filter,
+              nextToken: this.setNextToken,
+            },
+          });
+          const setCalendar3 = calendar3.data.listCalEvents.items;
+          this.setNextToken = calendar3.data.listCalEvents.nextToken;
+          console.log("Cust - Start Preparing for calendar4");
+          this.calendars = this.calendars.concat(setCalendar3);
         } else {
-          console.log("Cust - Not using calendar 3 yet")
+          console.log("Cust - Not using calendar 3 yet");
         }
 
-        const eventsorig = this.calendars
-        let events = []
-        let ce = eventsorig
-        ce.forEach(doc => {
+        const eventsorig = this.calendars;
+        let events = [];
+        let ce = eventsorig;
+        ce.forEach((doc) => {
           // if cancelled, then display name
-          if (doc.note_code === 'CANC'){
-            this.name = "CANCELLED - " + doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-            this.color = 'grey'
-          } else if (doc.note_code === 'INV'){
-            this.name = "INV - " + doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-            this.color = 'green'
-          } else if (doc.note_code === 'COMP'){
-            this.name = "DONE - " + doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-            this.color = 'blue'
-          // if not cancelled, then show only customer pertinent information
+          if (doc.note_code === "CANC") {
+            this.name =
+              "CANCELLED - " +
+              doc.time_of_day +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.color = "grey";
+          } else if (doc.note_code === "INV") {
+            this.name =
+              "INV - " +
+              doc.time_of_day +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.color = "green";
+          } else if (doc.note_code === "COMP") {
+            this.name =
+              "DONE - " +
+              doc.time_of_day +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.color = "blue";
+            // if not cancelled, then show only customer pertinent information
           } else {
-            this.name = doc.time_of_day + " - " + doc.service_category + " - " + doc.apt_num + " - " + doc.apt_status
-            this.color = 'black'
+            this.name =
+              doc.time_of_day +
+              " - " +
+              doc.service_category +
+              " - " +
+              doc.apt_num +
+              " - " +
+              doc.apt_status;
+            this.color = "black";
           }
 
           events.push({
@@ -905,27 +1419,27 @@ export default {
             apt_num: doc.apt_num,
             apt_status: doc.apt_status,
             service_category: doc.service_category,
-            created_by: doc.created_by
-          })
-        })
-        this.events = events.sort((a,b) => a.name.localeCompare(b.name))
+            created_by: doc.created_by,
+          });
+        });
+        this.events = events.sort((a, b) => a.name.localeCompare(b.name));
       }
     },
     async createEvent() {
       // set time based on am/pm
-      if (this.time_of_day === 'PM'){
-          this.start_time = '12:00'
-          this.end_time = '16:00'
+      if (this.time_of_day === "PM") {
+        this.start_time = "12:00";
+        this.end_time = "16:00";
       }
       // if technician is assigned, color is black, else red
-      if (this.category !== null){
-        this.color = 'black'
+      if (this.category !== null) {
+        this.color = "black";
       } else {
-        this.color = 'red'
+        this.color = "red";
       }
       // if owner2 is set, service is scheduled by admin... if not schedule by admin owner2 = logged in user
-      if (this.owner2 === null){
-        this.owner2 = this.userProps
+      if (this.owner2 === null) {
+        this.owner2 = this.userProps;
       }
 
       // // Every new service scheduled will have a note_code of NBC
@@ -937,246 +1451,319 @@ export default {
       // } else {
       //   this.name = this.time_of_day  + " - " + this.owner2 + " - " + this.service_category + " - " + this.apt_num + " - " + this.apt_status;
       // }
-      this.start = this.start_date
-      this.end = this.start_date
+      this.start = this.start_date;
+      this.end = this.start_date;
       // this.start = this.start_date + " " + this.start_time
       // console.log(this.start)
-    //   this.end = new Date(this.start_date + " " + this.end_time)
-    //   this.end = new Date(Date.parse(this.start_date + " " + this.end_time))
+      //   this.end = new Date(this.start_date + " " + this.end_time)
+      //   this.end = new Date(Date.parse(this.start_date + " " + this.end_time))
       // this.end = this.start_date + " " + this.end_time
       // console.log(this.end)
       // this.name2 = this.service_category + " - " + this.apt_num + " - " + this.apt_status;
-      this.name =""
-      const { name, details, start, end, time_of_day, color, category, owner2, service_category, apt_num, apt_status, created_by } = this;
-      const calendar = { name, details, start, end, time_of_day, color, category, owner2, service_category, apt_num, apt_status, created_by };
-    
-      // Make field mandatory 
+      this.name = "";
+      const {
+        name,
+        details,
+        start,
+        end,
+        time_of_day,
+        color,
+        category,
+        owner2,
+        service_category,
+        apt_num,
+        apt_status,
+        created_by,
+      } = this;
+      const calendar = {
+        name,
+        details,
+        start,
+        end,
+        time_of_day,
+        color,
+        category,
+        owner2,
+        service_category,
+        apt_num,
+        apt_status,
+        created_by,
+      };
+
+      // Make field mandatory
       // If user is admin and all info are available, then create record
-      if (this.userProps === 'admin' && this.apt_num && this.start && this.time_of_day && this.apt_status && this.service_category && this.owner2 && this.category) {
-        await API.graphql({query: createCalEvent, variables: { input: calendar }});this.clearRecords()} 
+      if (
+        this.userProps === "admin" &&
+        this.apt_num &&
+        this.start &&
+        this.time_of_day &&
+        this.apt_status &&
+        this.service_category &&
+        this.owner2 &&
+        this.category
+      ) {
+        await API.graphql({
+          query: createCalEvent,
+          variables: { input: calendar },
+        });
+        this.clearRecords();
+      }
       // Else if not admin and user with customer info, create record
-      else if (this.userProps !== 'admin' && this.apt_num && this.start && this.time_of_day && this.apt_status && this.service_category && (new Date().setHours(0,0,0,0)) <= (new Date(this.start_date.replace(/-/g, '/')).setHours(0,0,0,0))){
-          await API.graphql({query: createCalEvent, variables: { input: calendar }});this.clearRecords()}
-      else { 
-        this.showError = true
-        this.dialog_color = 'red lighten-5'
+      else if (
+        this.userProps !== "admin" &&
+        this.apt_num &&
+        this.start &&
+        this.time_of_day &&
+        this.apt_status &&
+        this.service_category &&
+        new Date().setHours(0, 0, 0, 0) <=
+          new Date(this.start_date.replace(/-/g, "/")).setHours(0, 0, 0, 0)
+      ) {
+        await API.graphql({
+          query: createCalEvent,
+          variables: { input: calendar },
+        });
+        this.clearRecords();
+      } else {
+        this.showError = true;
+        this.dialog_color = "red lighten-5";
       }
       // EH 1
       // this.getCalEvents()
-
     },
-    resetError(){
-      this.showError = false
-      this.dialog_color = null
+    resetError() {
+      this.showError = false;
+      this.dialog_color = null;
     },
-    clearRecords(){
-      this.dialog=false
-      this.showError=false
-      this.name = null
-      this.name2 = null
-      this.owner2 = null
-      this.details = null
-      this.start = null
-      this.time_of_day = null
-      this.admin_notes = null
-      this.emp_notes = null
-      this.category = null
-      this.apt_num = null
-      this.apt_status = null
-      this.service_category = null
-      this.selectedEvent = {}
-      this.start_date = null
+    clearRecords() {
+      this.dialog = false;
+      this.showError = false;
+      this.name = null;
+      this.name2 = null;
+      this.owner2 = null;
+      this.details = null;
+      this.start = null;
+      this.time_of_day = null;
+      this.admin_notes = null;
+      this.emp_notes = null;
+      this.category = null;
+      this.apt_num = null;
+      this.apt_status = null;
+      this.service_category = null;
+      this.selectedEvent = {};
+      this.start_date = null;
     },
     editEvent(ev) {
       this.currentlyEditing = ev.id;
     },
     async cancelEvent(ev) {
       ev.color = "grey";
-      ev.note_code = "CANC"
-      console.log("canc log" + ev.start_date)
+      ev.note_code = "CANC";
+      console.log("canc log" + ev.start_date);
 
       const calEventDetails = {
         id: ev.id,
         color: ev.color,
         note_code: ev.note_code,
-        name: "CANCELLED " + "- " + ev.name
+        name: "CANCELLED " + "- " + ev.name,
       };
-      await API.graphql({ query: updateCalEvent, variables: { input: calEventDetails }})
+      await API.graphql({
+        query: updateCalEvent,
+        variables: { input: calEventDetails },
+      });
 
       this.selectedOpen = false;
       this.dialogCancelConfirmation = false;
       this.currentlyEditing = null;
     },
     async updateEvent(ev) {
-      this.copyDelete="on"  
-      if(ev.note_code==='INV'){
-        this.color='green'
-        this.note_code='INV'
+      this.copyDelete = "on";
+      if (ev.note_code === "INV") {
+        this.color = "green";
+        this.note_code = "INV";
         const calEventDetails = {
           id: this.currentlyEditing,
           details: ev.details,
           emp_notes: ev.emp_notes,
-          admin_notes: ev.admin_notes}
-        await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
+          admin_notes: ev.admin_notes,
+        };
+        await API.graphql({
+          query: updateCalEvent,
+          variables: { input: calEventDetails },
+        });
         // * if there's a change in technician assignment... ONLY ADMIN can perform this
-      } else if(ev.note_code==='COMP'){
-        this.color='blue'
-        this.note_code='COMP'
+      } else if (ev.note_code === "COMP") {
+        this.color = "blue";
+        this.note_code = "COMP";
         const calEventDetails = {
           id: this.currentlyEditing,
           details: ev.details,
           emp_notes: ev.emp_notes,
-          admin_notes: ev.admin_notes}
-        await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
+          admin_notes: ev.admin_notes,
+        };
+        await API.graphql({
+          query: updateCalEvent,
+          variables: { input: calEventDetails },
+        });
         // * if there's a change in technician assignment... ONLY ADMIN can perform this
-      } else if(this.before_category_value != this.selectedEvent.category){
-          console.log("assigning tech")
-          // ** A - if there's no technician currently assigned
-          if (this.before_category_value===null){
-            console.log("A1")
-            // *** A1 - if notes r added
-            if (this.before_admin_notes_value != this.selectedEvent.admin_notes){
-              console.log("Technician is not previously assigned but notes r added")
-              this.note_code='NBA'
-              this.color='brown'
+      } else if (this.before_category_value != this.selectedEvent.category) {
+        console.log("assigning tech");
+        // ** A - if there's no technician currently assigned
+        if (this.before_category_value === null) {
+          console.log("A1");
+          // *** A1 - if notes r added
+          if (this.before_admin_notes_value != this.selectedEvent.admin_notes) {
+            console.log(
+              "Technician is not previously assigned but notes r added"
+            );
+            this.note_code = "NBA";
+            this.color = "brown";
             // *** A2 - if notes r NOT modified... category already in graphql
+          } else {
+            console.log("A2");
+            if (ev.code === "NBA") {
+              this.color = "brown";
+            } else if (ev.code === "NBC") {
+              this.color = "orange";
             } else {
-              console.log("A2")
-                if(ev.code==='NBA'){
-                  this.color='brown'
-                } else if (ev.code==='NBC'){
-                  this.color='orange'
-                } else {
-                    this.color='black'
-                }
+              this.color = "black";
             }
-            const calEventDetails = {
-              id: this.currentlyEditing,
-              note_code: this.note_code,
-              color: this.color,
-              category: ev.category,
-              admin_notes: ev.admin_notes}
-            await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
-          } // this is where A ends
+          }
+          const calEventDetails = {
+            id: this.currentlyEditing,
+            note_code: this.note_code,
+            color: this.color,
+            category: ev.category,
+            admin_notes: ev.admin_notes,
+          };
+          await API.graphql({
+            query: updateCalEvent,
+            variables: { input: calEventDetails },
+          });
+        } // this is where A ends
 
         // ** B if there's technician previously assigned
         else {
-            // *** B1 - notes r added
-            if (this.before_admin_notes_value != this.selectedEvent.admin_notes){
-              console.log("B1")
-              this.admin_notes=ev.admin_notes
-              this.color='brown'
-              this.note_code='NBA'
+          // *** B1 - notes r added
+          if (this.before_admin_notes_value != this.selectedEvent.admin_notes) {
+            console.log("B1");
+            this.admin_notes = ev.admin_notes;
+            this.color = "brown";
+            this.note_code = "NBA";
             // *** B2 - no notes r added
-            } else {
-              console.log("B2")
-            this.color='black'
+          } else {
+            console.log("B2");
+            this.color = "black";
             const calEventDetails = {
               id: this.currentlyEditing,
               color: this.color,
               note_code: this.note_code,
-              admin_notes: this.selectedEvent.admin_notes}
-            await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
+              admin_notes: this.selectedEvent.admin_notes,
+            };
+            await API.graphql({
+              query: updateCalEvent,
+              variables: { input: calEventDetails },
+            });
 
-                // 1)
-                // make sure it is not triggered when assigning a newly created service job
-                // make sure there's not a new job alert... does not show up when there's a duplicate
+            // 1)
+            // make sure it is not triggered when assigning a newly created service job
+            // make sure there's not a new job alert... does not show up when there's a duplicate
 
-                // 2) when edit without changing anything, it turns blue
+            // 2) when edit without changing anything, it turns blue
+          }
 
-            }
+          //when changing technician, duplicate service job and delete original
 
-                //when changing technician, duplicate service job and delete original
+          // copyDelete determines whether to control the alert sound and box
+          this.copyDelete = "off";
+          this.duplicateEvent(ev);
+          this.deleteEvent(ev);
 
-                // copyDelete determines whether to control the alert sound and box
-                this.copyDelete="off"
-                this.duplicateEvent(ev)
-                this.deleteEvent(ev)
-                
-                // this.copyDelete="off"
+          // this.copyDelete="off"
           // this.selectedEvent.color=this.color
           // this.selectedEvent.name=ev.time_of_day + " - " + ev.owner2 + " - " + ev.service_category + " - " + ev.apt_num + " - " + ev.apt_status + " - " + this.selectedEvent.category
-        
-        
         } // ** B ends here
-
       } // * ends here
-      
+
       // ** C did not change technician but notes were added
-      else if (this.before_details_value != ev.details||this.before_admin_notes_value != ev.admin_notes||this.before_emp_notes_value != ev.emp_notes)
-      {
+      else if (
+        this.before_details_value != ev.details ||
+        this.before_admin_notes_value != ev.admin_notes ||
+        this.before_emp_notes_value != ev.emp_notes
+      ) {
         // are there note changes
         // without technician
-        if (ev.category===null){
-        // *** C1 customer added notes
-          if(this.before_details_value != ev.details){
-            console.log("C1")
-            this.note_code='NBC'
+        if (ev.category === null) {
+          // *** C1 customer added notes
+          if (this.before_details_value != ev.details) {
+            console.log("C1");
+            this.note_code = "NBC";
           }
           // *** C2 admin added notes
-          else if(this.before_admin_notes_value != ev.admin_notes){
-            console.log("C2")
-            this.note_code='NBA'
+          else if (this.before_admin_notes_value != ev.admin_notes) {
+            console.log("C2");
+            this.note_code = "NBA";
           }
           // *** C3 tech added notes
-          else if(this.before_emp_notes_value != ev.emp_notes){
-            console.log("C3")
-            this.note_code='NBT'
+          else if (this.before_emp_notes_value != ev.emp_notes) {
+            console.log("C3");
+            this.note_code = "NBT";
           }
-          this.color='red'
+          this.color = "red";
         } else {
           // note changes with technician
           // *** C4 customer added notes
-          if(this.before_details_value != ev.details){
-            console.log("C4")
-            this.note_code='NBC'
-            this.color='orange'
+          if (this.before_details_value != ev.details) {
+            console.log("C4");
+            this.note_code = "NBC";
+            this.color = "orange";
           }
           // *** C5 admin added notes
-          else if(this.before_admin_notes_value != ev.admin_notes){
-            console.log("C5")
-            this.note_code='NBA'
-            this.color='brown'
+          else if (this.before_admin_notes_value != ev.admin_notes) {
+            console.log("C5");
+            this.note_code = "NBA";
+            this.color = "brown";
           }
           // *** C6 tech added notes
-          else if(this.before_emp_notes_value != ev.emp_notes){
-            console.log("C6")
-            this.note_code='NBT'
-            this.color='orange'
+          else if (this.before_emp_notes_value != ev.emp_notes) {
+            console.log("C6");
+            this.note_code = "NBT";
+            this.color = "orange";
           }
         }
+      } else {
+        // *** C7 Nothing changed
+        console.log("C7");
+        if (!this.selectedEvent.category) {
+          this.color = "red";
+        } else {
+          this.color = ev.color;
+        }
+
+        this.note_code = ev.note_code;
       }
-        else {
-          // *** C7 Nothing changed
-          console.log("C7")
-          if(!this.selectedEvent.category){
-            this.color = 'red'
-          } else {
-            this.color=ev.color
-          }
-          
-          this.note_code=ev.note_code
-        }
-        const calEventDetails = {
-          id: this.currentlyEditing,
-          color: this.color,
-          note_code: this.note_code,
-          details: ev.details,
-          emp_notes: ev.emp_notes,
-          admin_notes: ev.admin_notes
-          }
-        await API.graphql({query: updateCalEvent, variables: { input: calEventDetails },});
+      const calEventDetails = {
+        id: this.currentlyEditing,
+        color: this.color,
+        note_code: this.note_code,
+        details: ev.details,
+        emp_notes: ev.emp_notes,
+        admin_notes: ev.admin_notes,
+      };
+      await API.graphql({
+        query: updateCalEvent,
+        variables: { input: calEventDetails },
+      });
 
       // B should end here
-      
+
       this.selectedOpen = false;
       this.currentlyEditing = null;
 
       // EH2
       // this.getCalEvents()
-
     },
-    async duplicateEvent(ev){
+    async duplicateEvent(ev) {
       // const calEventDetailsDel = { id: ev.id };
       // await API.graphql({
       //   query: deleteCalEvent,
@@ -1197,29 +1784,29 @@ export default {
         admin_notes: ev.admin_notes,
         emp_notes: ev.emp_notes,
         category: ev.category,
-        color: this.color,        // fixes problem for when changing tech n adding notes, stays black
-        note_code: this.note_code // fixex problem for when changing tech n adding notes, tech is 
+        color: this.color, // fixes problem for when changing tech n adding notes, stays black
+        note_code: this.note_code, // fixex problem for when changing tech n adding notes, tech is
       };
       // await API.graphql({
       //   query: updateCalEvent,
       //   variables: { input: calEventDetails },
       // });
-      await API.graphql({query: createCalEvent, variables: { input: calEventDetails }})
-      console.log("Copy")
-
-  
+      await API.graphql({
+        query: createCalEvent,
+        variables: { input: calEventDetails },
+      });
+      console.log("Copy");
     },
-    closeEvent(){
-      this.selectedOpen = false
-      this.details = ""
-      this.emp_notes = ""
-      this.admin_notes = ""
-      this.currentlyEditing = null
-
+    closeEvent() {
+      this.selectedOpen = false;
+      this.details = "";
+      this.emp_notes = "";
+      this.admin_notes = "";
+      this.currentlyEditing = null;
     },
     async completeEvent(ev) {
       ev.color = "blue";
-      ev.note_code = "COMP"
+      ev.note_code = "COMP";
 
       const calEventDetails = {
         id: ev.id,
@@ -1229,7 +1816,10 @@ export default {
         // name: "COMPLETED " + "- " + ev.name
       };
 
-      await API.graphql({ query: updateCalEvent, variables: { input: calEventDetails }})
+      await API.graphql({
+        query: updateCalEvent,
+        variables: { input: calEventDetails },
+      });
       this.dialogCompleteConfirmation = false;
       this.selectedOpen = false;
       this.currentlyEditing = null;
@@ -1239,7 +1829,7 @@ export default {
     },
     async invoiceEvent(ev) {
       ev.color = "green";
-      ev.note_code = "INV"
+      ev.note_code = "INV";
 
       const calEventDetails = {
         id: ev.id,
@@ -1248,7 +1838,10 @@ export default {
         // name: "COMPLETED " + "- " + ev.name
       };
 
-      await API.graphql({ query: updateCalEvent, variables: { input: calEventDetails }})
+      await API.graphql({
+        query: updateCalEvent,
+        variables: { input: calEventDetails },
+      });
       this.dialogInvoiceConfirmation = false;
       this.selectedOpen = false;
       this.currentlyEditing = null;
@@ -1263,12 +1856,19 @@ export default {
       } else {
         ev.color = "red";
       }
-      
-      if (ev.note_code !== 'CANC' || ev.note_code !== 'COMP'){
-        this.note_code = null
+
+      if (ev.note_code !== "CANC" || ev.note_code !== "COMP") {
+        this.note_code = null;
       }
-      
-      const calEventDetails = { id: ev.id, color: ev.color, note_code: this.note_code, details: this.selectedEvent.details, emp_notes: this.selectedEvent.emp_notes, admin_notes: this.selectedEvent.admin_notes };
+
+      const calEventDetails = {
+        id: ev.id,
+        color: ev.color,
+        note_code: this.note_code,
+        details: this.selectedEvent.details,
+        emp_notes: this.selectedEvent.emp_notes,
+        admin_notes: this.selectedEvent.admin_notes,
+      };
       await API.graphql({
         query: updateCalEvent,
         variables: { input: calEventDetails },
@@ -1278,7 +1878,7 @@ export default {
       // this.getCalEvents();
     },
     async deleteEvent(ev) {
-      console.log("Delete Event")
+      console.log("Delete Event");
       const calEventDetails = { id: ev.id };
       await API.graphql({
         query: deleteCalEvent,
@@ -1296,7 +1896,7 @@ export default {
     },
     getEventColor(event) {
       // if(this.categories.indexOf(this.userProps) >= 0 || this.userProps === 'admin'){
-        return event.color;
+      return event.color;
       // } else {
       //   return 'black'
       // }
@@ -1374,6 +1974,6 @@ export default {
 </script>
 <style>
 .selected {
-    background-color: blue
+  background-color: blue;
 }
 </style>
