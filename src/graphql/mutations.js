@@ -43,6 +43,54 @@ export const deleteTodo = /* GraphQL */ `
     }
   }
 `;
+export const createCustomerTech = /* GraphQL */ `
+  mutation CreateCustomerTech(
+    $input: CreateCustomerTechInput!
+    $condition: ModelcustomerTechConditionInput
+  ) {
+    createCustomerTech(input: $input, condition: $condition) {
+      id
+      username
+      category
+      assigned
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const updateCustomerTech = /* GraphQL */ `
+  mutation UpdateCustomerTech(
+    $input: UpdateCustomerTechInput!
+    $condition: ModelcustomerTechConditionInput
+  ) {
+    updateCustomerTech(input: $input, condition: $condition) {
+      id
+      username
+      category
+      assigned
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const deleteCustomerTech = /* GraphQL */ `
+  mutation DeleteCustomerTech(
+    $input: DeleteCustomerTechInput!
+    $condition: ModelcustomerTechConditionInput
+  ) {
+    deleteCustomerTech(input: $input, condition: $condition) {
+      id
+      username
+      category
+      assigned
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
 export const createCalEvent = /* GraphQL */ `
   mutation CreateCalEvent(
     $input: CreateCalEventInput!

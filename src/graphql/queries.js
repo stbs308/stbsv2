@@ -30,6 +30,39 @@ export const listTodos = /* GraphQL */ `
     }
   }
 `;
+export const getCustomerTech = /* GraphQL */ `
+  query GetCustomerTech($id: ID!) {
+    getCustomerTech(id: $id) {
+      id
+      username
+      category
+      assigned
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const listCustomerTeches = /* GraphQL */ `
+  query ListCustomerTeches(
+    $filter: ModelcustomerTechFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listCustomerTeches(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        username
+        category
+        assigned
+        createdAt
+        updatedAt
+        owner
+      }
+      nextToken
+    }
+  }
+`;
 export const getCalEvent = /* GraphQL */ `
   query GetCalEvent($id: ID!) {
     getCalEvent(id: $id) {

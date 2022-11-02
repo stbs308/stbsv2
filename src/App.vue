@@ -3,7 +3,7 @@
     <v-app-bar app color="primary" dark absolute>
       <span class="mx-auto font-weight-bold white--text">Simply the Best Services, LLC.</span>
       <v-spacer></v-spacer>
-      For emergencies, call 214-791-3263...
+      For emergencies, call 214-791-3263
     </v-app-bar>
 
 
@@ -14,7 +14,8 @@
 
 
         <amplify-authenticator>
-          <amplify-sign-in slot="sign-in" :hide-sign-up="true">
+          <!-- <amplify-sign-in slot="sign-in" :hide-sign-up="true"> -->
+            <amplify-sign-in slot="sign-in">
           </amplify-sign-in>
         </amplify-authenticator>
         <amplify-sign-out v-if="authState === 'signedin'" >
