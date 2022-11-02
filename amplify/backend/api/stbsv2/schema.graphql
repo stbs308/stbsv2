@@ -4,6 +4,19 @@ type Todo @model {
   description: String
 }
 
+type customerTech @model @auth(rules: [
+  { allow: owner },
+  { allow: groups, groups: ["Admins"], mutations: [create, update, delete], queries: [list, get] },
+  { allow: groups, groups: ["Asst"], mutations: [create, update], queries: [list, get] },
+  { allow: private, mutations: [create, update] }
+  ])
+  {
+    id: ID!
+    username: String!
+    category: String
+    assigned: Int
+  }
+
 type calEvent @model @auth(rules: [
   { allow: owner },
   { allow: groups, groups: ["Admins"], mutations: [create, update, delete], queries: [list, get] },

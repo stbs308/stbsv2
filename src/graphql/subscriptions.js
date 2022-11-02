@@ -268,6 +268,45 @@ export const onDeleteTodo = /* GraphQL */ `
     }
   }
 `;
+export const onCreateCustomerTech = /* GraphQL */ `
+  subscription OnCreateCustomerTech {
+    onCreateCustomerTech {
+      id
+      username
+      category
+      assigned
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const onUpdateCustomerTech = /* GraphQL */ `
+  subscription OnUpdateCustomerTech {
+    onUpdateCustomerTech {
+      id
+      username
+      category
+      assigned
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const onDeleteCustomerTech = /* GraphQL */ `
+  subscription OnDeleteCustomerTech {
+    onDeleteCustomerTech {
+      id
+      username
+      category
+      assigned
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
 export const onCreateCalEvent = /* GraphQL */ `
   subscription OnCreateCalEvent {
     onCreateCalEvent {
