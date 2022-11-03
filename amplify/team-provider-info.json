@@ -47,6 +47,11 @@
       },
       "api": {
         "stbsv2": {}
+      },
+      "function": {
+        "createNewUserInProd": {
+          "usertable": "customerTech-lzrgf2yuubajfcrqhkxbej7qte-prod"
+        }
       }
     }
   }

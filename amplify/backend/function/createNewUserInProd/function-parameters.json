@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "api": {
+      "stbsv2": [
+        "Mutation"
+      ]
+    }
+  },
+  "lambdaLayers": [],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "usertable",
+      "environmentVariableName": "USERTABLE"
+    }
+  ]
+}
