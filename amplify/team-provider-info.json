@@ -59,7 +59,8 @@
       },
       "function": {
         "AdminQueries83334750": {},
-        "stbsv284d59e72PostConfirmation": {}
+        "stbsv284d59e72PostConfirmation": {},
+        "createNewUserInDB": {}
       }
     }
   }
