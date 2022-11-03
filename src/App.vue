@@ -14,7 +14,8 @@
 
 
         <amplify-authenticator>
-          <amplify-sign-in slot="sign-in" :hide-sign-up="true">
+          <amplify-sign-in slot="sign-in">
+            <!-- <amplify-sign-in slot="sign-in" :hide-sign-up="true"> -->
           </amplify-sign-in>
         </amplify-authenticator>
         <amplify-sign-out v-if="authState === 'signedin'" >
@@ -51,6 +52,22 @@ export default {
   },
   beforeDestroy() {
     this.unsubscribeAuth();
+  },
+  methods:{
+    async createRec(){
+      console.log("here")
+      let record = ["agapito","cesar","conrrado","eduardo","hugo","jose","karen","leo","maria","martin","pablo","resurface","vero","victor","technician1","technician2"]
+      record.forEach((item) => {
+        console.log(item)
+        const inputDetails = {
+            username: item,
+            category: "T",
+            assigned: 1,
+          };
+          API.graphql({ query: createCustomerTech, variables: { input: inputDetails } });
+      })
+    }
+
   }
 };
 </script>
