@@ -6,7 +6,6 @@
       For emergencies, call 214-791-3263
     </v-app-bar>
 
-
     <v-main>
       <!-- <TD /> -->
       <Calendar v-if="authState === 'signedin' && user" :userProps="user.username" />
@@ -29,6 +28,10 @@
 import Calendar from './components/Calendar';
 // import TD from './components/TechnicalDifficulites.vue'
 import { onAuthUIStateChange } from '@aws-amplify/ui-components'
+// import { API } from "aws-amplify";
+// import {
+//   createCustomerTech,
+// } from "@/graphql/mutations";
 
 export default {
   name: 'App',
@@ -52,7 +55,22 @@ export default {
   },
   beforeDestroy() {
     this.unsubscribeAuth();
-  }
+  }, 
+  // methods: {
+  //   async createRec(){
+  //     console.log("here")
+  //     let record = ["amp","apex","arioso","arlington","ash","aura","bnf","cedar","chase","circuit-side","cliffs","corners","corners-east","current-side","dakota","drey","durham","elan","gate","gateway","hill","holston","huntington","interurban","kace","lakes","live-oaks","loftrow","lucas","magnmay","meadow","montage-southside","northbridge","park","radius","riviera","stonebriar","teak","tealwood","truman","uppereastside","verandas","westside","customer1","customer2"]
+  //     record.forEach((item) => {
+  //       console.log(item)
+  //       const inputDetails = {
+  //           username: item,
+  //           category: "T",
+  //           assigned: 1,
+  //         };
+  //         API.graphql({ query: createCustomerTech, variables: { input: inputDetails } });
+  //     })
+  //   }
+  // }
 };
 </script>
 <style>

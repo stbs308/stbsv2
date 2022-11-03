@@ -9,7 +9,8 @@
       "UnauthRoleName": "amplify-stbsv2-dev-215329-unauthRole",
       "StackName": "amplify-stbsv2-dev-215329",
       "StackId": "arn:aws:cloudformation:us-east-1:411056514926:stack/amplify-stbsv2-dev-215329/f9ccb160-fd73-11eb-a694-0e5b1dad9edf",
-      "AmplifyAppId": "d46vm2ogjfoym"
+      "AmplifyAppId": "d46vm2ogjfoym",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-stbsv2-dev-215329-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
     },
     "categories": {
       "auth": {
@@ -23,6 +24,13 @@
       },
       "api": {
         "stbsv2": {}
+      },
+      "function": {
+        "createNewUserInDB": {
+          "usertable": "arn:aws:dynamodb:us-east-1:411056514926:table/customerTech-qgwsunwbqbgejkl2lutpcqqhkm-dev",
+          "deploymentBucketName": "amplify-stbsv2-dev-215329-deployment",
+          "s3Key": "amplify-builds/createNewUserInDB-765264393645586d3370-build.zip"
+        }
       }
     }
   },
@@ -40,13 +48,18 @@
     },
     "categories": {
       "auth": {
-        "stbsv284d59e72": {}
+        "stbsv284d59e72": {},
+        "userPoolGroups": {}
       },
       "hosting": {
         "amplifyhosting": {
           "appId": "d46vm2ogjfoym",
           "type": "manual"
         }
+      },
+      "function": {
+        "AdminQueries83334750": {},
+        "stbsv284d59e72PostConfirmation": {}
       }
     }
   }

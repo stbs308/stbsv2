@@ -56,6 +56,11 @@
               <v-list-item @click="dialogFind = true"
                 ><v-list-item-title>Search</v-list-item-title></v-list-item
               >
+              <v-list-item
+                v-if="userProps === 'admin'"
+                @click="dialogCustomerTech = true"
+                ><v-list-item-title>Customer/Tech</v-list-item-title></v-list-item
+              >
             </v-list>
           </v-menu>
         </v-toolbar>
@@ -626,7 +631,7 @@
 <script>
 import { useSound } from "@vueuse/sound";
 import buttonSfx from "../assets/audio.mp3";
-import { listCalEvents } from "@/graphql/queries";
+import { listCalEvents, listCustomerTeches } from "@/graphql/queries";
 import {
   newOnCreateCalEvent,
   newOnUpdateCalEvent,
@@ -647,6 +652,8 @@ import {
 export default {
   props: ["userProps"],
   data: () => ({
+    dialogCustomerTech: false,
+    customerTechs: [],
     focus: "",
     type: "month",
     typeToLabel: {
@@ -703,72 +710,72 @@ export default {
     service_categories: ["Carpet", "Housekeeping", "Paint", "Other"],
     category: null,
     categories: [
-      "agapito",
-      "cesar",
-      "conrrado",
-      "eduardo",
-      "hugo",
-      "jose", 
-      "karen",
-      "leo",
-      "maria",
-      "martin",
-      "pablo",
-      "resurface",
-      "vero",
-      "victor",
-      "technician1",
-      "technician2",
+      // "agapito",
+      // "cesar",
+      // "conrrado",
+      // "eduardo",
+      // "hugo",
+      // "jose", 
+      // "karen",
+      // "leo",
+      // "maria",
+      // "martin",
+      // "pablo",
+      // "resurface",
+      // "vero",
+      // "victor",
+      // "technician1",
+      // "technician2",
     ],
     selectedEmp: [],
     newJobAlert: false,
     owner2: null,
     owners: [
-      "amp",
-      "apex",
-      "arioso",
-      "arlington",
-      "ash",
-      "aura",
-      "bnf",
-      "cedar",
-      "chase",
-      "circuit-side",
-      "cliffs",
-      "corners",
-      "corners-east",
-      "current-side",
-      "dakota",
-      "drey",
-      "durham",
-      "elan",
-      "gate",
-      "gateway",
-      "hill",
-      "holston",
-      "huntington",
-      "interurban",
-      "kace",
-      "lakes",
-      "live-oaks",
-      "loftrow",
-      "lucas",
-      "magnmay",
-      "meadow",
-      "montage-southside",
-      "northbridge",
-      "park",
-      "radius",
-      "riviera",
-      "stonebriar",
-      "teak",
-      "tealwood",
-      "truman",
-      "uppereastside",
-      "verandas",
-      "westside",
-      "customer1",
-      "customer2",
+      // "amp",
+      // "apex",
+      // "arioso",
+      // "arlington",
+      // "ash",
+      // "aura",
+      // "bnf",
+      // "cedar",
+      // "chase",
+      // "circuit-side",
+      // "cliffs",
+      // "corners",
+      // "corners-east",
+      // "current-side",
+      // "dakota",
+      // "drey",
+      // "durham",
+      // "elan",
+      // "gate",
+      // "gateway",
+      // "hill",
+      // "holston",
+      // "huntington",
+      // "interurban",
+      // "kace",
+      // "lakes",
+      // "live-oaks",
+      // "loftrow",
+      // "lucas",
+      // "magnmay",
+      // "meadow",
+      // "montage-southside",
+      // "northbridge",
+      // "park",
+      // "radius",
+      // "riviera",
+      // "stonebriar",
+      // "teak",
+      // "tealwood",
+      // "truman",
+      // "uppereastside",
+      // "verandas",
+      // "westside",
+      // "customer1",
+      // "customer2",
     ],
     note_code: null,
     search: "",
@@ -823,6 +830,7 @@ export default {
   },
   created() {
     this.subscribeCal();
+    this.getCustomerTech()
   },
   mounted() {
     this.$refs.calendar.checkChange();
@@ -835,6 +843,36 @@ export default {
     // }
   },
   methods: {
+    async getCustomerTech(){
+      const { data } = await API.graphql({
+        query: listCustomerTeches,
+        variables: { limit: 1000 }
+      })
+      data.listCustomerTeches.items.forEach((item) => {
+        this.customerTechs.push({
+          username: item.username,
+          category: item.category,
+          assigned: item.assigned
+        })
+      })
+      const category = this.customerTechs.filter(
+        (item) => item.category === "T"
+      )
+      const owner = this.customerTechs.filter(
+        (item) => item.category === "C"
+      )
+
+      category.sort((a,b) => a.username.localeCompare(b.username))
+      owner.sort((a,b) => a.username.localeCompare(b.username))
+
+      category.forEach((item) => {
+        this.categories.push(item.username)
+      })
+
+      owner.forEach((item) => {
+        this.owners.push(item.username)
+      })
+    },
     async subscribeCal() {
       // EH1
       // If admin
