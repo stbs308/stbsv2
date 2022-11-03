@@ -50,7 +50,14 @@
       },
       "function": {
         "createNewUserInProd": {
-          "usertable": "customerTech-lzrgf2yuubajfcrqhkxbej7qte-prod"
+          "usertable": "customerTech-lzrgf2yuubajfcrqhkxbej7qte-prod",
+          "deploymentBucketName": "amplify-stbsv2-prod-64813-deployment",
+          "s3Key": "amplify-builds/createNewUserInProd-78504f5276436f676942-build.zip"
+        },
+        "createNewUserInDB": {
+          "usertable": "customerTech-lzrgf2yuubajfcrqhkxbej7qte-prod",
+          "deploymentBucketName": "amplify-stbsv2-prod-64813-deployment",
+          "s3Key": "amplify-builds/createNewUserInDB-765264393645586d3370-build.zip"
         }
       }
     }
