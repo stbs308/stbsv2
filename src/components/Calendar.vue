@@ -789,7 +789,7 @@
                     rounded
                     color="red"
                     dark
-                    @click="deleteCustomer(index)"
+                    @click="deleteUnassigned(index)"
                     icon
                     ><v-icon>mdi-delete-circle-outline</v-icon></v-btn
                   >
@@ -1027,9 +1027,23 @@ export default {
     // }
   },
   methods: {
+    async deleteUnassigned(index){
+      const deleteInput = {
+        id: this.unassigneds[index].id,
+      };
+      try {
+        //delete from db
+        await API.graphql({
+          query: deleteCustomerTech,
+          variables: { input: deleteInput },
+        });
+      } catch (err) {
+        console.log(err);
+      }
+      //delete from memory (owners array)
+      this.unassigneds.splice(index, 1);
+    },
     async putScore(index, pcat) {
-      console.log(this.unassigneds[index].username);
-      console.log(this.unassigneds[index].id);
       await API.graphql(
         graphqlOperation(updateCustomerTech, {
           input: {
