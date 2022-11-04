@@ -638,10 +638,10 @@
     <!-- progress bar -->
     <v-overlay v-if="apiRequest">
       <v-progress-circular
-      :size="50"
-      color="primary"
-      indeterminate
-    ></v-progress-circular>
+        :size="50"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
     </v-overlay>
     <!-- Add / Delete Tech -->
     <v-dialog
@@ -651,46 +651,50 @@
       transition="dialog-bottom-transition"
     >
       <v-card>
-        
-        <v-toolbar
-          dark
-          color="primary"
-        >
-          <v-btn
-            icon
-            dark
-            @click="dialogTech = false"
-          >
+        <v-toolbar dark color="primary">
+          <v-btn icon dark @click="dialogTech = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Tech User Administration</v-toolbar-title>
         </v-toolbar>
 
         <v-row justify="center" no-gutters class="my-15">
+          <v-text-field
+            class="mx-5"
+            label="Add Technician Name"
+            placeholder="Technician Name"
+            hint="Techs created here DOES NOT create a sign-on for the technician"
+            outlined
+            dense
+            v-model="techName"
+          ></v-text-field>
 
-        <v-text-field class="mx-5" label="Add Technician Name" placeholder="Technician Name" hint="Techs created here DOES NOT create a sign-on for the technician" outlined dense v-model="techName"></v-text-field>
+          <v-btn rounded color="green" dark @click="addTech" icon
+            ><v-icon large>mdi-location-enter</v-icon></v-btn
+          >
+        </v-row>
+        <v-row justify="center" no-gutters>
+          <v-simple-table fixed-header fill-height="300px">
+            <template v-slot:default>
+              <tbody>
+                <tr v-for="(item, index) in categories" :key="index">
+                  <td>{{ item }}</td>
 
-
-       <v-btn rounded color="green" dark @click="addTech" icon><v-icon large>mdi-location-enter</v-icon></v-btn>
- 
-    </v-row>
-    <v-row justify="center" no-gutters>     
-        <v-simple-table fixed-header fill-height="300px">
-    <template v-slot:default>
-      <tbody>
-        
-        <tr v-for="(item, index) in categories" :key="index">
-          
-          <td >{{ item }}</td>
- 
-          <!-- <v-btn color="primary" class="mt-2" dark @click="editItem(index)" icon><v-icon>mdi-circle-edit-outline</v-icon></v-btn> -->
-          <v-btn class="mr-4 mt-2" rounded color="red" dark @click="deleteTech(index)" icon><v-icon>mdi-delete-circle-outline</v-icon></v-btn>  
-           
-        </tr>
-      </tbody> 
-    </template>
-  </v-simple-table>  
-</v-row>
+                  <!-- <v-btn color="primary" class="mt-2" dark @click="editItem(index)" icon><v-icon>mdi-circle-edit-outline</v-icon></v-btn> -->
+                  <v-btn
+                    class="mr-4 mt-2"
+                    rounded
+                    color="red"
+                    dark
+                    @click="deleteTech(index)"
+                    icon
+                    ><v-icon>mdi-delete-circle-outline</v-icon></v-btn
+                  >
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-row>
       </v-card>
     </v-dialog>
     <!-- Add / Delete Customer -->
@@ -701,48 +705,50 @@
       transition="dialog-bottom-transition"
     >
       <v-card>
-        
-        <v-toolbar
-          dark
-          color="primary"
-        >
-          <v-btn
-            icon
-            dark
-            @click="dialogCustomer = false"
-          >
+        <v-toolbar dark color="primary">
+          <v-btn icon dark @click="dialogCustomer = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Customer Administration</v-toolbar-title>
         </v-toolbar>
 
         <v-row justify="center" no-gutters class="my-15">
+          <v-text-field
+            class="mx-5"
+            label="Add Customer Name"
+            placeholder="Customer Name"
+            hint="Customer created here DOES NOT create a sign-on for the customer"
+            outlined
+            dense
+            v-model="customerName"
+          ></v-text-field>
 
-        <v-text-field class="mx-5" label="Add Customer Name" placeholder="Customer Name" 
-        hint="Customer created here DOES NOT create a sign-on for the customer"
-        outlined dense v-model="customerName"></v-text-field>
+          <v-btn rounded color="green" dark @click="addCustomer" icon
+            ><v-icon large>mdi-location-enter</v-icon></v-btn
+          >
+        </v-row>
+        <v-row justify="center" no-gutters>
+          <v-simple-table fixed-header fill-height="300px">
+            <template v-slot:default>
+              <tbody>
+                <tr v-for="(item, index) in owners" :key="index">
+                  <td>{{ item }}</td>
 
-
-       <v-btn rounded color="green" dark @click="addCustomer" icon><v-icon large>mdi-location-enter</v-icon></v-btn>
- 
-    </v-row>
-    <v-row justify="center" no-gutters>     
-        <v-simple-table fixed-header fill-height="300px">
-    <template v-slot:default>
-      <tbody>
-        
-        <tr v-for="(item, index) in owners" :key="index">
-          
-          <td >{{ item }}</td>
- 
-          <!-- <v-btn color="primary" class="mt-2" dark @click="editItem(index)" icon><v-icon>mdi-circle-edit-outline</v-icon></v-btn> -->
-          <v-btn class="mr-4 mt-2" rounded color="red" dark @click="deleteCustomer(index)" icon><v-icon>mdi-delete-circle-outline</v-icon></v-btn>  
-           
-        </tr>
-      </tbody> 
-    </template>
-  </v-simple-table>  
-</v-row>
+                  <!-- <v-btn color="primary" class="mt-2" dark @click="editItem(index)" icon><v-icon>mdi-circle-edit-outline</v-icon></v-btn> -->
+                  <v-btn
+                    class="mr-4 mt-2"
+                    rounded
+                    color="red"
+                    dark
+                    @click="deleteCustomer(index)"
+                    icon
+                    ><v-icon>mdi-delete-circle-outline</v-icon></v-btn
+                  >
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-row>
       </v-card>
     </v-dialog>
     <!-- Add / Delete UnAssigned -->
@@ -753,44 +759,45 @@
       transition="dialog-bottom-transition"
     >
       <v-card>
-        
-        <v-toolbar
-          dark
-          color="primary"
-        >
-          <v-btn
-            icon
-            dark
-            @click="dialogUnassigned = false"
-          >
+        <v-toolbar dark color="primary">
+          <v-btn icon dark @click="dialogUnassigned = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Unassigned</v-toolbar-title>
         </v-toolbar>
 
-    <v-row justify="center" no-gutters>     
-        <v-simple-table fixed-header fill-height="300px">
-    <template v-slot:default>
-      <tbody>
-        
-        <tr v-for="(item, index) in unassigneds" :key="index">
-          
-          <td >{{ item.username }}</td>
-          <td>
-                    <v-radio-group v-model="item.category" row @change="putScore(index, item.category)">
-                        <v-radio label="Customer" value="C"></v-radio>
-                        <v-radio label="Technician" value="T"></v-radio>
+        <v-row justify="center" no-gutters>
+          <v-simple-table fixed-header fill-height="300px">
+            <template v-slot:default>
+              <tbody>
+                <tr v-for="(item, index) in unassigneds" :key="index">
+                  <td>{{ item.username }}</td>
+                  <td>
+                    <v-radio-group
+                      v-model="item.category"
+                      row
+                      @change="putScore(index, item.category)"
+                    >
+                      <v-radio label="Customer" value="C"></v-radio>
+                      <v-radio label="Technician" value="T"></v-radio>
                     </v-radio-group>
-                </td>
- 
-          <!-- <v-btn color="primary" class="mt-2" dark @click="editItem(index)" icon><v-icon>mdi-circle-edit-outline</v-icon></v-btn> -->
-          <v-btn class="mr-4 mt-2" rounded color="red" dark @click="deleteCustomer(index)" icon><v-icon>mdi-delete-circle-outline</v-icon></v-btn>  
-           
-        </tr>
-      </tbody> 
-    </template>
-  </v-simple-table>  
-</v-row>
+                  </td>
+
+                  <!-- <v-btn color="primary" class="mt-2" dark @click="editItem(index)" icon><v-icon>mdi-circle-edit-outline</v-icon></v-btn> -->
+                  <v-btn
+                    class="mr-4 mt-2"
+                    rounded
+                    color="red"
+                    dark
+                    @click="deleteCustomer(index)"
+                    icon
+                    ><v-icon>mdi-delete-circle-outline</v-icon></v-btn
+                  >
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-row>
       </v-card>
     </v-dialog>
   </v-row>
@@ -818,14 +825,14 @@ import {
   deleteCalEvent,
   createCustomerTech,
   deleteCustomerTech,
-  updateCustomerTech
+  updateCustomerTech,
 } from "@/graphql/mutations";
 export default {
   props: ["userProps"],
   data: () => ({
     unassigneds: [],
-    customerName: '',
-    techName: '',
+    customerName: "",
+    techName: "",
     apiRequest: false,
     dialogTech: false,
     dialogCustomer: false,
@@ -892,7 +899,7 @@ export default {
       // "conrrado",
       // "eduardo",
       // "hugo",
-      // "jose", 
+      // "jose",
       // "karen",
       // "leo",
       // "maria",
@@ -1007,7 +1014,7 @@ export default {
   },
   created() {
     this.subscribeCal();
-    this.getCustomerTech()
+    this.getCustomerTech();
   },
   mounted() {
     this.$refs.calendar.checkChange();
@@ -1021,147 +1028,155 @@ export default {
   },
   methods: {
     async putScore(index, pcat) {
-      console.log(this.unassigneds[index].username)
-      console.log(this.unassigneds[index].id)
-        await API.graphql(graphqlOperation(updateCustomerTech, {
-            input: {
-                id: this.unassigneds[index].id,
-                category: pcat,
-                assigned: 1
-        }}))
+      console.log(this.unassigneds[index].username);
+      console.log(this.unassigneds[index].id);
+      await API.graphql(
+        graphqlOperation(updateCustomerTech, {
+          input: {
+            id: this.unassigneds[index].id,
+            category: pcat,
+            assigned: 1,
+          },
+        })
+      );
 
-        if(pcat === 'T'){
-          this.categories.push(this.unassigneds[index].username)
-          this.categories.sort((a,b) => a.localeCompare(b))
-        } else {
-          this.owners.push(this.unassigneds[index].username)
-          this.owners.sort((a,b) => a.localeCompare(b))
-        }
-        this.unassigneds.splice(index, 1)
+      if (pcat === "T") {
+        this.categories.push(this.unassigneds[index].username);
+        this.categories.sort((a, b) => a.localeCompare(b));
+      } else {
+        this.owners.push(this.unassigneds[index].username);
+        this.owners.sort((a, b) => a.localeCompare(b));
+      }
+      this.unassigneds.splice(index, 1);
     },
     async addCustomer() {
-        await API.graphql({
-            query: createCustomerTech,
-            variables: {input: {
-              username: this.customerName,
-              category: 'C',
-              assigned: 1
-            }},
-        });
-        // add this newTodo record into the owners array
-        this.owners.push(this.customerName)
-        this.owners.sort((a,b) => a.localeCompare(b))
+      await API.graphql({
+        query: createCustomerTech,
+        variables: {
+          input: {
+            username: this.customerName,
+            category: "C",
+            assigned: 1,
+          },
+        },
+      });
+      // add this newTodo record into the owners array
+      this.owners.push(this.customerName);
+      this.owners.sort((a, b) => a.localeCompare(b));
 
       //empty out the variable which empty the text fields
-      this.customerName = '';
-   
+      this.customerName = "";
     },
     async deleteCustomer(index) {
       const filter = {
-        username: { eq: this.owners[index]}
-      }
+        username: { eq: this.owners[index] },
+      };
 
       const { data } = await API.graphql({
-          query: listCustomerTeches,
-          variables: { limit: 1000, filter: filter },
-        });
-        const filteredID = data.listCustomerTeches.items[0].id;
-        //use try/catch to get feedback if there's any errors...otherwise you don't know what the errors are
+        query: listCustomerTeches,
+        variables: { limit: 1000, filter: filter },
+      });
+      const filteredID = data.listCustomerTeches.items[0].id;
+      //use try/catch to get feedback if there's any errors...otherwise you don't know what the errors are
 
-        const deleteInput = {
-          id: filteredID,
-          // username: this.owners[index]
-        }
-        try {
-            //delete from db
-            await API.graphql({ query: deleteCustomerTech, variables: {input: deleteInput }});
-        } catch(err) {
-            console.log(err)
-        }
-        //delete from memory (owners array)
-        this.owners.splice(index, 1)
+      const deleteInput = {
+        id: filteredID,
+        // username: this.owners[index]
+      };
+      try {
+        //delete from db
+        await API.graphql({
+          query: deleteCustomerTech,
+          variables: { input: deleteInput },
+        });
+      } catch (err) {
+        console.log(err);
+      }
+      //delete from memory (owners array)
+      this.owners.splice(index, 1);
     },
     async addTech() {
-        await API.graphql({
-            query: createCustomerTech,
-            variables: {input: {
-              username: this.techName,
-              category: 'T',
-              assigned: 1
-            }},
-        });
-        // add this newTodo record into the categories array
-        this.categories.push(this.techName)
-        this.categories.sort((a,b) => a.localeCompare(b))
+      await API.graphql({
+        query: createCustomerTech,
+        variables: {
+          input: {
+            username: this.techName,
+            category: "T",
+            assigned: 1,
+          },
+        },
+      });
+      // add this newTodo record into the categories array
+      this.categories.push(this.techName);
+      this.categories.sort((a, b) => a.localeCompare(b));
 
       //empty out the variable which empty the text fields
-      this.techName = '';
-   
+      this.techName = "";
     },
     async deleteTech(index) {
       const filter = {
-        username: { eq: this.categories[index]}
-      }
+        username: { eq: this.categories[index] },
+      };
 
-      const { data } = await API.graphql({
-          query: listCustomerTeches,
-          variables: { limit: 1000, filter: filter },
-        });
-        const filteredID = data.listCustomerTeches.items[0].id;
-        //use try/catch to get feedback if there's any errors...otherwise you don't know what the errors are
-
-        const deleteInput = {
-          id: filteredID,
-          // username: this.categories[index]
-        }
-        try {
-            //delete from db
-            await API.graphql({ query: deleteCustomerTech, variables: {input: deleteInput }});
-        } catch(err) {
-            console.log(err)
-        }
-        //delete from memory (categories array)
-        this.categories.splice(index, 1)
-        
-    },
-    async getCustomerTech(){
       const { data } = await API.graphql({
         query: listCustomerTeches,
-        variables: { limit: 1000 }
-      })
+        variables: { limit: 1000, filter: filter },
+      });
+      const filteredID = data.listCustomerTeches.items[0].id;
+      //use try/catch to get feedback if there's any errors...otherwise you don't know what the errors are
+
+      const deleteInput = {
+        id: filteredID,
+        // username: this.categories[index]
+      };
+      try {
+        //delete from db
+        await API.graphql({
+          query: deleteCustomerTech,
+          variables: { input: deleteInput },
+        });
+      } catch (err) {
+        console.log(err);
+      }
+      //delete from memory (categories array)
+      this.categories.splice(index, 1);
+    },
+    async getCustomerTech() {
+      const { data } = await API.graphql({
+        query: listCustomerTeches,
+        variables: { limit: 1000 },
+      });
       data.listCustomerTeches.items.forEach((item) => {
         this.customerTechs.push({
           id: item.id,
           username: item.username,
           category: item.category,
-          assigned: item.assigned
-        })
-      })
+          assigned: item.assigned,
+        });
+      });
       const category = this.customerTechs.filter(
         (item) => item.category === "T"
-      )
-      const owner = this.customerTechs.filter(
-        (item) => item.category === "C"
-      )
+      );
+      const owner = this.customerTechs.filter((item) => item.category === "C");
 
       const unassigned = this.customerTechs.filter(
         (item) => item.assigned === null
-      )
+      );
 
-      category.sort((a,b) => a.username.localeCompare(b.username))
-      owner.sort((a,b) => a.username.localeCompare(b.username))
+      category.sort((a, b) => a.username.localeCompare(b.username));
+      owner.sort((a, b) => a.username.localeCompare(b.username));
 
       category.forEach((item) => {
-        this.categories.push(item.username)
-      })
+        this.categories.push(item.username);
+      });
 
       owner.forEach((item) => {
-        this.owners.push(item.username)
-      })
+        this.owners.push(item.username);
+      });
 
       unassigned.forEach((item) => {
-        this.unassigneds.push(item)
-      })
+        this.unassigneds.push(item);
+      });
     },
     async subscribeCal() {
       // EH1
