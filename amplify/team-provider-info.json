@@ -20,6 +20,9 @@
           "appId": "d46vm2ogjfoym",
           "type": "manual"
         }
+      },
+      "function": {
+        "createNewUserInDB": {}
       }
     }
   },
