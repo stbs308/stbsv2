@@ -845,7 +845,7 @@ export default {
       week: "Week",
       day: "Day",
       "4day": "4 Days",
-      category: "Employee",
+      category: "Category",
     },
     rules: [
       (v) =>
